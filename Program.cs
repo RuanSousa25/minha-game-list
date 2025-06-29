@@ -36,7 +36,7 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionSt
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JogoService>();
-builder.Services.AddScoped<ImagensServices>();
+builder.Services.AddScoped<ImagensSugestaoService>();
 builder.Services.AddScoped<SugerirJogoService>();
 builder.Services.AddScoped<BlobService>();
 builder.Services.AddCors(options =>

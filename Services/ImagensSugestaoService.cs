@@ -5,7 +5,7 @@ using GamesList.Models;
 
 namespace GamesList.Services
 {
-    public class ImagensServices(AppDbContext appDbContext)
+    public class ImagensSugestaoService(AppDbContext appDbContext)
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 

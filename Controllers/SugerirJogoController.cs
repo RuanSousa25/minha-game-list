@@ -9,11 +9,11 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(SugerirJogoService sugerirJogoService, BlobService blobService, ImagensServices imagensServices) : ControllerBase
+    public class SugerirJogoController(SugerirJogoService sugerirJogoService, BlobService blobService, ImagensSugestaoService imagensServices) : ControllerBase
     {
         private readonly SugerirJogoService _sugerirJogoService = sugerirJogoService;
         private readonly BlobService _blobService = blobService;
-        private readonly ImagensServices _imagensServices = imagensServices;
+        private readonly ImagensSugestaoService _imagensServices = imagensServices;
 
 
         [Authorize]
@@ -40,13 +40,23 @@ namespace GamesList.Controllers
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdStr, out var userId))
 
-            throw new Exception("Usuário não autenticado.");
+                throw new Exception("Usuário não autenticado.");
             var sugestaoResult = await _sugerirJogoService.SaveSugestaoJogo(request, userId);
             if (!sugestaoResult.Success) return StatusCode(500, sugestaoResult.Message);
             var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data);
             if (!sugestaoImagemResult.Success) return StatusCode(500, sugestaoImagemResult.Message);
 
             return Ok("Sugestão inserida com sucesso.");
+        }
+
+        [HttpPost("aprovar/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> AprovarJogo([FromRoute] int id)
+        {
+            var result = await _sugerirJogoService.AprovarJogo(id);
+            if (!result.Success) return StatusCode(500, result.Message);
+
+            return Ok(result.Data);
         }
     }
 }

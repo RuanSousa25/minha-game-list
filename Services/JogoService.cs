@@ -9,7 +9,7 @@ namespace GamesList.Services
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 
-        public  ICollection<JogoDTO> GetJogosList()
+        public ICollection<JogoDTO> GetJogosList()
         {
             var jogos = _appDbContext.Jogos
             .Include(j => j.Avaliacoes)

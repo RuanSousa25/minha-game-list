@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GamesList.Controllers
 {
     [ApiController]
-    [Route("game")]
+    [Route("jogos")]
     public class JogoController(JogoService jogoService) : ControllerBase
     {
         private readonly JogoService _jogoService = jogoService;
@@ -20,6 +20,7 @@ namespace GamesList.Controllers
             var result = _jogoService.GetJogosList();
             return Ok(result);
         }
-    
+
+
     }
 }

@@ -5,6 +5,8 @@ namespace GamesList.Models
         public int Id { get; set; }
         public int UsuarioId { get; set; }
         public required string Nome { get; set; }
+        public ICollection<Genero> Generos { get; set; } = [];
+        public ICollection<ImagemSugestao> Imagens { get; set; } = [];
         public required DateTime DataSugestao { get; set; }
         public bool Aprovado { get; set; }
     }

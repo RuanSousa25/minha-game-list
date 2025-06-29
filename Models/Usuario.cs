@@ -6,6 +6,6 @@ namespace GamesList.Models
         public required string Login { get; set; }
         public required string SenhaHash { get; set; }
         public bool IsAdmin { get; set; }
-        public required ICollection<Avaliacao> Avaliacao{ get; set; }
+        public ICollection<Avaliacao> Avaliacoes { get; set; } = [];
     }
 }

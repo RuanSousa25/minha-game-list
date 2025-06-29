@@ -4,8 +4,8 @@ namespace GamesList.Models
     {
         public int Id { get; set; }
         public required string Nome { get; set; }
-        public required ICollection<Genero> Genero { get; set; }
-        public required ICollection<Avaliacao> Avaliacao { get; set; }
-        public required ICollection<Imagem> Imagens { get; set;}
+        public  ICollection<Genero> Generos { get; set; } = [];
+        public  ICollection<Avaliacao> Avaliacoes { get; set; } = [];
+        public  ICollection<Imagem> Imagens { get; set; } = [];
     }
 }

@@ -14,7 +14,5 @@ namespace GamesList.Databases
         public DbSet<SugerirJogo> SugerirJogo => Set<SugerirJogo>();
         public DbSet<ImagemSugestao> ImagemSugestao => Set<ImagemSugestao>();
         
-        
-        
     }
 }

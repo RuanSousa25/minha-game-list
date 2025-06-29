@@ -1,6 +1,6 @@
 namespace GamesList.Models
 {
-    public class ImagemSugestao
+    public class ImagensSugestao
     {
         public int Id { get; set; }
         public int SugerirJogoId { get; set; }

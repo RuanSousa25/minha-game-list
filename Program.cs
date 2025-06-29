@@ -29,12 +29,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions.EnableRetryOnFailure( maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null)));
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JogoService>();
+builder.Services.AddScoped<ImagensServices>();
+builder.Services.AddScoped<SugerirJogoService>();
+builder.Services.AddScoped<BlobService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

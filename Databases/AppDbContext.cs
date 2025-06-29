@@ -12,19 +12,28 @@ namespace GamesList.Databases
         public DbSet<Imagem> Imagens => Set<Imagem>();
         public DbSet<TipoImagem> TiposImagens => Set<TipoImagem>();
         public DbSet<SugerirJogo> SugerirJogo => Set<SugerirJogo>();
-        public DbSet<ImagemSugestao> ImagemSugestao => Set<ImagemSugestao>();
-        
+        public DbSet<ImagensSugestao> ImagensSugestao => Set<ImagensSugestao>();
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    modelBuilder.Entity<Jogo>()
-        .HasMany(j => j.Generos)
-        .WithMany(g => g.Jogos)
-        .UsingEntity<Dictionary<string, object>>(
-            "JogosGeneros",
-            j => j.HasOne<Genero>().WithMany().HasForeignKey("GeneroId"),
-            g => g.HasOne<Jogo>().WithMany().HasForeignKey("JogoId")
-        );
-}
+        {
+            modelBuilder.Entity<Jogo>()
+                .HasMany(j => j.Generos)
+                .WithMany(g => g.Jogos)
+                .UsingEntity<Dictionary<string, object>>(
+                    "JogosGeneros",
+                    j => j.HasOne<Genero>().WithMany().HasForeignKey("GeneroId"),
+                    g => g.HasOne<Jogo>().WithMany().HasForeignKey("JogoId")
+                );
+            modelBuilder.Entity<SugerirJogo>()
+                .HasMany(j => j.Generos)
+                .WithMany(g => g.JogosSugeridos)
+                .UsingEntity<Dictionary<string, object>>(
+                    "SugerirJogoGeneros",
+                    j => j.HasOne<Genero>().WithMany().HasForeignKey("GeneroId"),
+                    g => g.HasOne<SugerirJogo>().WithMany().HasForeignKey("SugerirJogoId")
+                );
+            
+        }
     }
 }

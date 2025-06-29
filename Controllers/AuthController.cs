@@ -9,10 +9,9 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class AuthController(AuthService authService, IConfiguration config) : ControllerBase
+    public class AuthController(AuthService authService) : ControllerBase
     {
         private readonly AuthService _authService = authService;
-        private readonly IConfiguration _configuration = config;
 
 
         [HttpPost("register")]

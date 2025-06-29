@@ -14,5 +14,17 @@ namespace GamesList.Databases
         public DbSet<SugerirJogo> SugerirJogo => Set<SugerirJogo>();
         public DbSet<ImagemSugestao> ImagemSugestao => Set<ImagemSugestao>();
         
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Jogo>()
+        .HasMany(j => j.Generos)
+        .WithMany(g => g.Jogos)
+        .UsingEntity<Dictionary<string, object>>(
+            "JogosGeneros",
+            j => j.HasOne<Genero>().WithMany().HasForeignKey("GeneroId"),
+            g => g.HasOne<Jogo>().WithMany().HasForeignKey("JogoId")
+        );
+}
     }
 }

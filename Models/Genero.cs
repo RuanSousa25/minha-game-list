@@ -6,6 +6,7 @@ namespace GamesList.Models
     {
         public int Id { get; set; }
         public required string Nome { get; set; }
+        [JsonIgnore]
         public ICollection<Jogo> Jogos { get; set; } = [];
         [JsonIgnore]
         public ICollection<SugerirJogo> JogosSugeridos { get; set; } = [];

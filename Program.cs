@@ -34,6 +34,7 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionSt
                 errorNumbersToAdd: null)));
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<JogoService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

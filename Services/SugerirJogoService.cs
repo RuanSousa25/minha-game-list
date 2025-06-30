@@ -43,5 +43,16 @@ namespace GamesList.Services
             await _appDbContext.SaveChangesAsync();
             return ServiceResultDto<JogoDTO>.Ok(new JogoDTO(jogo));
         }
+
+        internal async Task<ServiceResultDto<List<SugerirJogo>>> ListSugerirJogo()
+        {
+            var sugestoes =
+            await _appDbContext.SugerirJogo
+            .Include(s => s.Generos)
+            .Include(s => s.Imagens)
+            .ToListAsync();
+
+            return ServiceResultDto<List<SugerirJogo>>.Ok(sugestoes);
+        }
     }
 }

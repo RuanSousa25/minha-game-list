@@ -16,6 +16,16 @@ namespace GamesList.Controllers
         private readonly ImagensSugestaoService _imagensServices = imagensServices;
 
 
+        [HttpGet()]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> ListSugestaoJogo()
+        {
+            var result = await _sugerirJogoService.ListSugerirJogo();
+            if (!result.Success) return StatusCode(500, result.Message);
+            return Ok(result);
+        }
+
+        [HttpPost()]
         [Authorize]
         public async Task<ActionResult<string>> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagem)
         {
@@ -38,9 +48,8 @@ namespace GamesList.Controllers
             if (!blobResult.Success) return StatusCode(500, blobResult.Message);
 
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userIdStr, out var userId))
+            if (!int.TryParse(userIdStr, out var userId)) throw new Exception("Usuário não autenticado.");
 
-                throw new Exception("Usuário não autenticado.");
             var sugestaoResult = await _sugerirJogoService.SaveSugestaoJogo(request, userId);
             if (!sugestaoResult.Success) return StatusCode(500, sugestaoResult.Message);
             var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data);

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GamesList.Controllers
 {
     [ApiController]
-    [Route("jogos")]
+    [Route("api/jogos")]
     public class JogoController(JogoService jogoService) : ControllerBase
     {
         private readonly JogoService _jogoService = jogoService;

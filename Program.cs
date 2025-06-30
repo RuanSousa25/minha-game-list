@@ -39,6 +39,7 @@ builder.Services.AddScoped<JogoService>();
 builder.Services.AddScoped<ImagensSugestaoService>();
 builder.Services.AddScoped<SugerirJogoService>();
 builder.Services.AddScoped<BlobService>();
+builder.Services.AddScoped<AvaliacaoService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

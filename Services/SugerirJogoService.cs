@@ -27,12 +27,11 @@ namespace GamesList.Services
             .Include(s => s.Generos)
             .Include(s => s.Imagens)
             .FirstOrDefaultAsync(s => s.Id == id);
-            
+
             if (sugestao == null) return ServiceResultDto<JogoDTO>.Fail("Sugestão não encontrada.");
             sugestao.Aprovado = true;
 
-            var generos = sugestao.Generos.Select(g => _appDbContext.Generos.Find(g.Id)!).ToList();
-            var jogo = new Jogo { Generos = generos, Nome = sugestao.Nome };
+            var jogo = new Jogo { Generos = sugestao.Generos.ToList(), Nome = sugestao.Nome };
             await _appDbContext.Jogos.AddAsync(jogo);
             await _appDbContext.SaveChangesAsync();
 

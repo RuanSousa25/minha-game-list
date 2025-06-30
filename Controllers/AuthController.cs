@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GamesList.Controllers
 {
     [ApiController]
-    [Route("auth")]
+    [Route("api/auth")]
     public class AuthController(AuthService authService) : ControllerBase
     {
         private readonly AuthService _authService = authService;

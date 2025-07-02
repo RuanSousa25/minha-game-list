@@ -9,7 +9,7 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(SugerirJogoService sugerirJogoService, BlobService blobService, ImagensSugestaoService imagensServices) : ControllerBase
+    public class SugerirJogoController(SugerirJogoService sugerirJogoService, BlobService blobService, ImagensSugestaoService imagensServices) : ApiControllerBase
     {
         private readonly SugerirJogoService _sugerirJogoService = sugerirJogoService;
         private readonly BlobService _blobService = blobService;
@@ -18,7 +18,7 @@ namespace GamesList.Controllers
 
         [HttpGet()]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> ListSugestaoJogo()
+        public async Task<IActionResult> ListSugestaoJogo()
         {
             var result = await _sugerirJogoService.ListSugerirJogo();
             if (!result.Success) return StatusCode(500, result.Message);
@@ -27,7 +27,7 @@ namespace GamesList.Controllers
 
         [HttpPost()]
         [Authorize]
-        public async Task<ActionResult<string>> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagem)
+        public async Task<IActionResult> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagem)
         {
             if (string.IsNullOrWhiteSpace(sugestao)) return BadRequest("Campo de sugestão vazio.");
 
@@ -45,27 +45,25 @@ namespace GamesList.Controllers
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
             var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName);
-            if (!blobResult.Success) return StatusCode(500, blobResult.Message);
+            if (!blobResult.Success) return StatusCode(blobResult.StatusCode, blobResult.Message);
 
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdStr, out var userId)) throw new Exception("Usuário não autenticado.");
 
             var sugestaoResult = await _sugerirJogoService.SaveSugestaoJogo(request, userId);
-            if (!sugestaoResult.Success) return StatusCode(500, sugestaoResult.Message);
+            if (!sugestaoResult.Success) return StatusCode(sugestaoResult.StatusCode, sugestaoResult.Message);
             var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data);
-            if (!sugestaoImagemResult.Success) return StatusCode(500, sugestaoImagemResult.Message);
+            if (!sugestaoImagemResult.Success) return StatusCode(sugestaoImagemResult.StatusCode, sugestaoImagemResult.Message);
 
             return Ok("Sugestão inserida com sucesso.");
         }
 
         [HttpPost("aprovar/{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> AprovarJogo([FromRoute] int id)
+        public async Task<IActionResult> AprovarJogo([FromRoute] int id)
         {
             var result = await _sugerirJogoService.AprovarJogo(id);
-            if (!result.Success) return StatusCode(500, result.Message);
-
-            return Ok(result.Data);
+            return FromResult(result);
         }
     }
 }

@@ -9,26 +9,22 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController(AuthService authService) : ControllerBase
+    public class AuthController(AuthService authService) : ApiControllerBase
     {
         private readonly AuthService _authService = authService;
 
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var result = await _authService.Register(request);
-            if (!result.Success) return BadRequest(result.Message);
-
-            return Ok(result.Data);
+            return FromResult(result);
         }
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var result = await _authService.Login(request);
-            if (!result.Success) return Unauthorized(result.Message);
-
-            return Ok(result.Data);
+            return FromResult(result);
         }
     }
 }

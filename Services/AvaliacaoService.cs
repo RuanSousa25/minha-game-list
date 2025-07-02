@@ -3,6 +3,7 @@ using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
+using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services
 {
@@ -13,24 +14,22 @@ namespace GamesList.Services
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
         {
             var avaliacoes = await _appDbContext.Avaliacoes.Where(a => a.JogoId == id).ToListAsync();
-            return ServiceResultDto<List<Avaliacao>>.Ok(avaliacoes);
+            return Ok(avaliacoes);
         }
 
         internal async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id)
         {
             var avaliacoes = await _appDbContext.Avaliacoes.Where(a => a.UsuarioId == id).ToListAsync();
-            return ServiceResultDto<List<Avaliacao>>.Ok(avaliacoes);
+            return Ok(avaliacoes);
         }
 
         internal async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
             var jogoExiste = await _appDbContext.Jogos.AnyAsync(j => j.Id == request.JogoId);
-            if (!jogoExiste)
-            {
-                return ServiceResultDto<string>.Fail("Jogo não encontrado.");
-            }
 
-            if (request.Nota < 0 || request.Nota > 10) return ServiceResultDto<string>.Fail("Nota inválida. Deve ser entre 1 e 10.");
+            if (!jogoExiste) return NotFound<string>("Jogo não encontrado.");
+            if (request.Nota < 0 || request.Nota > 10) return BadRequest<string>("Nota inválida. Deve ser entre 1 e 10.");
+
             var avaliacao =
             await _appDbContext.Avaliacoes
             .FirstOrDefaultAsync(a => a.UsuarioId == userId && a.JogoId == request.JogoId);
@@ -50,9 +49,9 @@ namespace GamesList.Services
 
             try {
                 await _appDbContext.SaveChangesAsync();
-                return ServiceResultDto<string>.Ok("Avaliação postada com sucesso.");
+                return Ok("Avaliação postada com sucesso.");
             } catch (Exception ex) {
-                return ServiceResultDto<string>.Fail("Erro ao salvar avaliação.");
+                return ServerError<string>("Erro ao salvar avaliação. Error: "+ex);
             }
         }
     }

@@ -9,16 +9,16 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/jogos")]
-    public class JogoController(JogoService jogoService) : ControllerBase
+    public class JogoController(JogoService jogoService) : ApiControllerBase
     {
         private readonly JogoService _jogoService = jogoService;
 
 
         [HttpGet()]
-        public async Task<ActionResult> ListAllJogos()
+        public async Task<IActionResult> ListAllJogos()
         {
-            var result = _jogoService.GetJogosList();
-            return Ok(result);
+            var result = await _jogoService.GetJogosList();
+            return FromResult(result);
         }
 
 

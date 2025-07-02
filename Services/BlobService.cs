@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using GamesList.DTOs;
+using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services
 {
@@ -19,7 +20,7 @@ namespace GamesList.Services
             var blobClient = _containerClient.GetBlobClient(fileName);
             await blobClient.UploadAsync(fileStream, overwrite: true);
             var url = blobClient.Uri.ToString();
-            if (string.IsNullOrWhiteSpace(url)) return ServiceResultDto<string>.Fail("Ocorreu um erro ao fazer o upload da imagem");
+            if (string.IsNullOrWhiteSpace(url)) return ServerError<string>("Ocorreu um erro ao fazer o upload da imagem");
             return ServiceResultDto<string>.Ok(url);
         }
     }

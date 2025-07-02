@@ -9,13 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING_DEFAULT");
-Console.WriteLine(connectionString);
 var key = Environment.GetEnvironmentVariable("JWT_SECRET");
-if (key == null)
-{
-    Console.WriteLine("JWT Secret ausente. Interrompendo inicialização.");
-    return;
-}
+if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(key)){ return; }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {

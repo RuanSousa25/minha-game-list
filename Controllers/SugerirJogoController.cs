@@ -14,6 +14,7 @@ namespace GamesList.Controllers
         private readonly SugerirJogoService _sugerirJogoService = sugerirJogoService;
         private readonly BlobService _blobService = blobService;
         private readonly ImagensSugestaoService _imagensServices = imagensServices;
+        private static readonly JsonSerializerOptions _jsonOptions = new (){ PropertyNameCaseInsensitive = true };
 
 
         [HttpGet()]
@@ -31,28 +32,27 @@ namespace GamesList.Controllers
         {
             if (string.IsNullOrWhiteSpace(sugestao)) return BadRequest("Campo de sugestão vazio.");
 
-            UploadGameRequest request;
+            UploadGameRequest? request;
             try
             {
-                request = JsonSerializer.Deserialize<UploadGameRequest>(sugestao);
+                request = JsonSerializer.Deserialize<UploadGameRequest>(sugestao, _jsonOptions);
             }
             catch
             {
                 return BadRequest("Sugestão inválida. JSON não correspondente.");
             }
-
+            if (request == null) return BadRequest("Não há sugestão para inserir.");
             if (imagem == null) return BadRequest("Não há imagem para a sugestão.");
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
-            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName);
+            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
             if (!blobResult.Success) return StatusCode(blobResult.StatusCode, blobResult.Message);
 
-            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userIdStr, out var userId)) throw new Exception("Usuário não autenticado.");
-
+            if (GetUserId() is not int userId) return Unauthorized();
             var sugestaoResult = await _sugerirJogoService.SaveSugestaoJogo(request, userId);
             if (!sugestaoResult.Success) return StatusCode(sugestaoResult.StatusCode, sugestaoResult.Message);
-            var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data);
+
+            var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data!);
             if (!sugestaoImagemResult.Success) return StatusCode(sugestaoImagemResult.StatusCode, sugestaoImagemResult.Message);
 
             return Ok("Sugestão inserida com sucesso.");

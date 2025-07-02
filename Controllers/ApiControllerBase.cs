@@ -16,5 +16,11 @@ namespace GamesList.Controllers
 
             return StatusCode(result.StatusCode == 0 ? 200 : result.StatusCode, result.Data);
         }
+
+        protected int? GetUserId()
+        {
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdStr, out var userId) ? userId : null;
+        }
     }
 }

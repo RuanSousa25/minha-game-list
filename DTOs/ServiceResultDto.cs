@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace GamesList.DTOs
 {
     public class ServiceResultDto<T>
     {
         public int StatusCode { get; set; }
+         [MemberNotNullWhen(true, nameof(Data))]
         public bool Success { get; set; }
         public string? Message { get; set; }
         public T? Data { get; set; }

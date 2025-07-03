@@ -9,12 +9,10 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(SugerirJogoService sugerirJogoService, BlobService blobService, ImagensSugestaoService imagensServices) : ApiControllerBase
+    public class SugerirJogoController(SugerirJogoService sugerirJogoService) : ApiControllerBase
     {
         private readonly SugerirJogoService _sugerirJogoService = sugerirJogoService;
-        private readonly BlobService _blobService = blobService;
-        private readonly ImagensSugestaoService _imagensServices = imagensServices;
-        private static readonly JsonSerializerOptions _jsonOptions = new (){ PropertyNameCaseInsensitive = true };
+        private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
 
         [HttpGet()]
@@ -22,8 +20,7 @@ namespace GamesList.Controllers
         public async Task<IActionResult> ListSugestaoJogo()
         {
             var result = await _sugerirJogoService.ListSugerirJogo();
-            if (!result.Success) return StatusCode(500, result.Message);
-            return Ok(result);
+            return FromResult(result);
         }
 
         [HttpPost()]
@@ -41,21 +38,13 @@ namespace GamesList.Controllers
             {
                 return BadRequest("Sugestão inválida. JSON não correspondente.");
             }
+            
             if (request == null) return BadRequest("Não há sugestão para inserir.");
             if (imagem == null) return BadRequest("Não há imagem para a sugestão.");
-
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
-            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
-            if (!blobResult.Success) return StatusCode(blobResult.StatusCode, blobResult.Message);
-
             if (GetUserId() is not int userId) return Unauthorized();
-            var sugestaoResult = await _sugerirJogoService.SaveSugestaoJogo(request, userId);
-            if (!sugestaoResult.Success) return StatusCode(sugestaoResult.StatusCode, sugestaoResult.Message);
 
-            var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data!);
-            if (!sugestaoImagemResult.Success) return StatusCode(sugestaoImagemResult.StatusCode, sugestaoImagemResult.Message);
-
-            return Ok("Sugestão inserida com sucesso.");
+            var result = await _sugerirJogoService.SaveSugestaoJogoComImagem(request, imagem, userId);
+            return FromResult(result);
         }
 
         [HttpPost("aprovar/{id}")]
@@ -65,5 +54,6 @@ namespace GamesList.Controllers
             var result = await _sugerirJogoService.AprovarJogo(id);
             return FromResult(result);
         }
+        
     }
 }

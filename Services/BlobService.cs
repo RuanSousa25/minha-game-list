@@ -21,8 +21,6 @@ namespace GamesList.Services
         public async Task<ServiceResultDto<string>> UploadFileAsync(Stream fileStream, string fileName, string contentType)
         {
 
-            
-
             var headers = new BlobHttpHeaders
             {
                 ContentType = contentType

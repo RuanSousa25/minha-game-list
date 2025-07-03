@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
 namespace GamesList.Services
 {
-    public class SugerirJogoService(AppDbContext appDbContext)
+    public class SugerirJogoService(AppDbContext appDbContext, BlobService blobService, ImagensSugestaoService imagensServices)
     {
         private readonly AppDbContext _appDbContext = appDbContext;
+        private readonly BlobService _blobService = blobService;
+        private readonly ImagensSugestaoService _imagensServices = imagensServices;
 
         public async Task<ServiceResultDto<int>> SaveSugestaoJogo(UploadGameRequest request, int userId)
         {
@@ -18,6 +20,20 @@ namespace GamesList.Services
             _appDbContext.SugerirJogo.Add(sugestao);
             await _appDbContext.SaveChangesAsync();
             return Ok(sugestao.Id);
+        }
+        public async Task<ServiceResultDto<string>> SaveSugestaoJogoComImagem(UploadGameRequest request, IFormFile imagem, int userId)
+        {
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
+            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
+            if (!blobResult.Success) return blobResult;
+
+            var sugestaoResult = await SaveSugestaoJogo(request, userId);
+            if (!sugestaoResult.Success) return ServerError<string>("Não foi possível inserir a sugestão.");
+
+            var sugestaoImagemResult = await _imagensServices.SaveImagem(sugestaoResult.Data, blobResult.Data!);
+            if (!sugestaoImagemResult.Success) return sugestaoImagemResult;
+
+            return Ok("Sugestão inserida com sucesso");
         }
 
         public async Task<ServiceResultDto<JogoDTO>> AprovarJogo(int id)
@@ -38,7 +54,7 @@ namespace GamesList.Services
             var imagens = sugestao.Imagens;
             foreach (var imagem in imagens)
             {
-                await _appDbContext.Imagens.AddAsync(new Imagem { Url = imagem.Url, JogoId = jogo.Id, TipoId = imagem.TipoId});
+                await _appDbContext.Imagens.AddAsync(new Imagem { Url = imagem.Url, JogoId = jogo.Id, TipoId = imagem.TipoId });
             }
             await _appDbContext.SaveChangesAsync();
             return Ok(new JogoDTO(jogo));

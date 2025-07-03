@@ -20,7 +20,13 @@ namespace GamesList.Controllers
             var result = await _jogoService.GetJogosList();
             return FromResult(result);
         }
-
-
+        
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteJogo([FromRoute] int id)
+        {
+            var result = await _jogoService.RemoveJogo(id);
+            return FromResult(result);
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace GamesList.DTOs
     {
         public int Id { get; set; }
         public string Nome { get; set; }
-        public ICollection<int> Avaliacoes { get; set; } = [];
+        public int Nota { get; set; }
         public ICollection<string> Generos { get; set; } = [];
         public ICollection<string> Imagens { get; set; } = [];
 
@@ -14,8 +14,8 @@ namespace GamesList.DTOs
         {
             Id = jogo.Id;
             Nome = jogo.Nome;
+            Nota = jogo.Avaliacoes.Any() ? (int)Math.Round(jogo.Avaliacoes.Average(a => a.Nota)) : 0;
             Generos = [.. jogo.Generos.Select(g => g.Nome)];
-            Avaliacoes = [.. jogo.Avaliacoes.Select(a => a.Id)];
             Imagens = [.. jogo.Imagens.Select(i => i.Url)];
             
         }

@@ -11,21 +11,27 @@ using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services
 {
-    public class AuthService(AppDbContext appDbContext, IConfiguration config)
+    public class AuthService(AppDbContext appDbContext, IConfiguration config, ILogger<AuthService> logger)
     {
+        private readonly ILogger<AuthService> _logger = logger;
         private AppDbContext _appDbContext = appDbContext;
         private readonly IConfiguration _config = config;
 
+
         public async Task<ServiceResultDto<string>> Register(RegisterRequest request)
         {
-            if (_appDbContext.Usuarios.Any(u => u.Login == request.Login)) return Conflict<string>("Usuário já existe");
+            if (_appDbContext.Usuarios.Any(u => u.Login == request.Login))
+            {
+                _logger.LogWarning("Usuário {usuario} já existe no banco de dados.", request.Login);
+                return Conflict<string>("Usuário já existe");
+            }
             var hash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
             var user = new Usuario { Login = request.Login, SenhaHash = hash };
 
             _appDbContext.Usuarios.Add(user);
             await _appDbContext.SaveChangesAsync();
-
+            _logger.LogInformation("Usuário cadastrado.");
             return Ok("Usuario Cadastrado");
         }
 
@@ -33,7 +39,12 @@ namespace GamesList.Services
         {
 
             var user = await _appDbContext.Usuarios.SingleOrDefaultAsync(u => u.Login == request.Login);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Senha, user.SenhaHash)) return ValidationError<string>("Credenciais Incorretas.");
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Senha, user.SenhaHash))
+            {
+                 _logger.LogWarning("Credenciais incorretas. Usuario: {login}", request.Login);
+                return ValidationError<string>("Credenciais Incorretas.");
+            }
+
 
             var claims = new[]{
                 new Claim(ClaimTypes.Name, user.Login),
@@ -52,6 +63,7 @@ namespace GamesList.Services
                 signingCredentials: creds
             );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            _logger.LogInformation("Token criado. usuario: {login}", request.Login);
             return Ok(jwt);
 
         }

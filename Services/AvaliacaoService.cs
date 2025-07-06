@@ -7,8 +7,9 @@ using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services
 {
-    public class AvaliacaoService(AppDbContext appDbContext)
+    public class AvaliacaoService(AppDbContext appDbContext, ILogger<AvaliacaoService> logger)
     {
+        private readonly ILogger<AvaliacaoService> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
 
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
@@ -17,18 +18,26 @@ namespace GamesList.Services
             return Ok(avaliacoes);
         }
 
-        internal async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id)
+        public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id)
         {
             var avaliacoes = await _appDbContext.Avaliacoes.Where(a => a.UsuarioId == id).ToListAsync();
             return Ok(avaliacoes);
         }
 
-        internal async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
+        public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
             var jogoExiste = await _appDbContext.Jogos.AnyAsync(j => j.Id == request.JogoId);
 
-            if (!jogoExiste) return NotFound<string>("Jogo não encontrado.");
-            if (request.Nota < 0 || request.Nota > 10) return BadRequest<string>("Nota inválida. Deve ser entre 1 e 10.");
+            if (!jogoExiste)
+            {
+                _logger.LogWarning("Tentativa de avaliação para jogo inexistente. jogo: {id} | Usuario: {userId}.", request.JogoId, userId);
+                return NotFound<string>("Jogo não encontrado.");
+            }
+            if (request.Nota < 0 || request.Nota > 10)
+            {
+                _logger.LogWarning("Nota inválida (abaixo de 0 ou acima de 10). valor da nota: {nota}| jogo: {jogoId} | Usuario: {userId}.", request.Nota,request.JogoId, userId);
+                return BadRequest<string>("Nota inválida. Deve ser entre 0 e 10.");
+            }
 
             var avaliacao =
             await _appDbContext.Avaliacoes
@@ -37,7 +46,8 @@ namespace GamesList.Services
             if (avaliacao == null)
             {
                 avaliacao = new Avaliacao { UsuarioId = userId, Nota = request.Nota, Opiniao = request.Opiniao, Data = DateTime.UtcNow, JogoId = request.JogoId };
-                _appDbContext.Avaliacoes.Add(avaliacao);
+                await _appDbContext.Avaliacoes.AddAsync(avaliacao);
+                _logger.LogInformation("Avaliação nova adicionada. Jogo: {jogoId} | Usuario: {userId}", request.JogoId, userId);
             }
             else
             {
@@ -45,13 +55,16 @@ namespace GamesList.Services
                 avaliacao.Opiniao = request.Opiniao;
                 avaliacao.Nota = request.Nota;
                 _appDbContext.Update(avaliacao);
+                _logger.LogInformation("Avaliação atualizada. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
             }
 
             try {
                 await _appDbContext.SaveChangesAsync();
+                 _logger.LogInformation("Commit de avaliação realizado. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
                 return Ok("Avaliação postada com sucesso.");
             } catch (Exception ex) {
-                return ServerError<string>("Erro ao salvar avaliação. Error: "+ex);
+                 _logger.LogError("Erro no commit da avaliação. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId} | Ex: {ex}", avaliacao.Id, request.JogoId, userId, ex);
+                return ServerError<string>("Erro ao salvar avaliação.");
             }
         }
     }

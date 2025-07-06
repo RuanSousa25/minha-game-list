@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
 namespace GamesList.Services
 {
-    public class JogoService(AppDbContext appDbContext)
+    public class JogoService(AppDbContext appDbContext, ILogger<JogoService> logger)
     {
+        private readonly ILogger<JogoService> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
 
         public async Task<ServiceResultDto<List<JogoDTO>>> GetJogosList()
@@ -28,7 +29,11 @@ namespace GamesList.Services
             .Include(j => j.Generos)
             .Include(j => j.Imagens)
             .FirstOrDefaultAsync(j => j.Id == id);
-            if (jogo == null) return NotFound<string>("Jogo não encontrado.");
+            if (jogo == null)
+            {
+                _logger.LogWarning("Jogo {id} não econtrado no banco de dados.", id);
+                return NotFound<string>("Jogo não encontrado.");
+            }
             jogo.Generos.Clear();
             _appDbContext.Avaliacoes.RemoveRange(jogo.Avaliacoes);
             _appDbContext.Imagens.RemoveRange(jogo.Imagens);
@@ -38,8 +43,10 @@ namespace GamesList.Services
             }
             catch (Exception e)
             {
-                return ServerError<string>("Não foi possível realizar a exclusão. Error: "+e);
+                _logger.LogError("Não foi possível remover o jogo {nome}. JogoId: {id}", jogo.Nome, jogo.Id);
+                return ServerError<string>("Não foi possível realizar a exclusão. Error: " + e);
             }
+            _logger.LogInformation("Jogo {nome} foi removido com sucesso. JogoId: {id}", jogo.Nome, jogo.Id);
             return Ok("Exclusão realizada com sucesso");
         }
     }

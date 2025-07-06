@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
 namespace GamesList.Services
 {
-    public class SugerirJogoService(AppDbContext appDbContext, BlobService blobService, ImagensSugestaoService imagensServices)
+    public class SugerirJogoService(AppDbContext appDbContext, BlobService blobService, ImagensSugestaoService imagensServices, ILogger<SugerirJogoService> logger)
     {
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly BlobService _blobService = blobService;
         private readonly ImagensSugestaoService _imagensServices = imagensServices;
+        private readonly ILogger<SugerirJogoService> _logger = logger;
 
         public async Task<ServiceResultDto<int>> SaveSugestaoJogo(UploadGameRequest request, int userId)
         {
@@ -19,6 +20,7 @@ namespace GamesList.Services
             var sugestao = new SugerirJogo { UsuarioId = userId, Nome = request.Nome, Generos = generos, DataSugestao = DateTime.UtcNow, Aprovado = false };
             _appDbContext.SugerirJogo.Add(sugestao);
             await _appDbContext.SaveChangesAsync();
+            _logger.LogInformation("Sugestão de jogo {nome} inserida com sucesso. Id da sugestão: {id}", sugestao.Nome, sugestao.Id);
             return Ok(sugestao.Id);
         }
         public async Task<ServiceResultDto<string>> SaveSugestaoJogoComImagem(UploadGameRequest request, IFormFile imagem, int userId)
@@ -44,7 +46,11 @@ namespace GamesList.Services
             .Include(s => s.Imagens)
             .FirstOrDefaultAsync(s => s.Id == id);
 
-            if (sugestao == null) return NotFound<JogoDTO>("Sugestão não encontrada.");
+            if (sugestao == null)
+            {
+                _logger.LogWarning("Não foi encontrada a sugestão de {id}", id);
+                return NotFound<JogoDTO>("Sugestão não encontrada.");
+            }
             sugestao.Aprovado = true;
 
             var jogo = new Jogo { Generos = sugestao.Generos.ToList(), Nome = sugestao.Nome };

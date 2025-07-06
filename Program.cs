@@ -1,7 +1,11 @@
 using System.Text;
 using GamesList.Databases;
-using GamesList.Models;
-using GamesList.Services;
+using GamesList.Services.AuthService;
+using GamesList.Services.AvaliacaoService;
+using GamesList.Services.BlobService;
+using GamesList.Services.ImagensSugestaoService;
+using GamesList.Services.JogoService;
+using GamesList.Services.SugerirJogoService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,12 +33,12 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionSt
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null)));
 builder.Services.AddControllers();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<JogoService>();
-builder.Services.AddScoped<ImagensSugestaoService>();
-builder.Services.AddScoped<SugerirJogoService>();
-builder.Services.AddScoped<BlobService>();
-builder.Services.AddScoped<AvaliacaoService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJogoService, JogoService>();
+builder.Services.AddScoped<IImagensSugestaoService, ImagensSugestaoService>();
+builder.Services.AddScoped<ISugerirJogoService, SugerirJogoService>();
+builder.Services.AddScoped<IBlobService, BlobService>();
+builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

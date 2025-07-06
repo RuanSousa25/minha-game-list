@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static GamesList.DTOs.Helpers.Results;
 
-namespace GamesList.Services
+namespace GamesList.Services.AuthService
 {
-    public class AuthService(AppDbContext appDbContext, IConfiguration config, ILogger<AuthService> logger)
+    public class AuthService(AppDbContext appDbContext, IConfiguration config, ILogger<AuthService> logger) : IAuthService
     {
         private readonly ILogger<AuthService> _logger = logger;
-        private AppDbContext _appDbContext = appDbContext;
+        private readonly AppDbContext _appDbContext = appDbContext;
         private readonly IConfiguration _config = config;
 
 
@@ -35,13 +35,13 @@ namespace GamesList.Services
             return Ok("Usuario Cadastrado");
         }
 
-        internal async Task<ServiceResultDto<string>> Login(LoginRequest request)
+        public async Task<ServiceResultDto<string>> Login(LoginRequest request)
         {
 
             var user = await _appDbContext.Usuarios.SingleOrDefaultAsync(u => u.Login == request.Login);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Senha, user.SenhaHash))
             {
-                 _logger.LogWarning("Credenciais incorretas. Usuario: {login}", request.Login);
+                 _logger.LogWarning("Credenciais incorretas.");
                 return ValidationError<string>("Credenciais Incorretas.");
             }
 
@@ -63,7 +63,7 @@ namespace GamesList.Services
                 signingCredentials: creds
             );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            _logger.LogInformation("Token criado. usuario: {login}", request.Login);
+            _logger.LogInformation("Token criado.");
             return Ok(jwt);
 
         }

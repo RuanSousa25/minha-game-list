@@ -5,9 +5,9 @@ using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
 
-namespace GamesList.Services
+namespace GamesList.Services.AvaliacaoService
 {
-    public class AvaliacaoService(AppDbContext appDbContext, ILogger<AvaliacaoService> logger)
+    public class AvaliacaoService(AppDbContext appDbContext, ILogger<AvaliacaoService> logger) : IAvaliacaoService
     {
         private readonly ILogger<AvaliacaoService> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;

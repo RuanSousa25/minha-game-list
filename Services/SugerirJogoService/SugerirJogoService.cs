@@ -1,17 +1,19 @@
-using System.Threading.Tasks;
 using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
+using GamesList.Services.BlobService;
+using GamesList.Services.ImagensSugestaoService;
 using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
-namespace GamesList.Services
+
+namespace GamesList.Services.SugerirJogoService
 {
-    public class SugerirJogoService(AppDbContext appDbContext, BlobService blobService, ImagensSugestaoService imagensServices, ILogger<SugerirJogoService> logger)
+    public class SugerirJogoService(AppDbContext appDbContext, IBlobService blobService, IImagensSugestaoService imagensServices, ILogger<SugerirJogoService> logger) : ISugerirJogoService
     {
         private readonly AppDbContext _appDbContext = appDbContext;
-        private readonly BlobService _blobService = blobService;
-        private readonly ImagensSugestaoService _imagensServices = imagensServices;
+        private readonly IBlobService _blobService = blobService;
+        private readonly IImagensSugestaoService _imagensServices = imagensServices;
         private readonly ILogger<SugerirJogoService> _logger = logger;
 
         public async Task<ServiceResultDto<int>> SaveSugestaoJogo(UploadGameRequest request, int userId)
@@ -66,7 +68,7 @@ namespace GamesList.Services
             return Ok(new JogoDTO(jogo));
         }
 
-        internal async Task<ServiceResultDto<List<SugerirJogo>>> ListSugerirJogo()
+        public async Task<ServiceResultDto<List<SugerirJogo>>> ListSugerirJogo()
         {
             var sugestoes =
             await _appDbContext.SugerirJogo

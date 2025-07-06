@@ -1,12 +1,11 @@
 using GamesList.Databases;
 using GamesList.DTOs;
-using GamesList.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
-namespace GamesList.Services
+
+namespace GamesList.Services.JogoService
 {
-    public class JogoService(AppDbContext appDbContext, ILogger<JogoService> logger)
+    public class JogoService(AppDbContext appDbContext, ILogger<JogoService> logger) : IJogoService
     {
         private readonly ILogger<JogoService> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;

@@ -1,5 +1,5 @@
 using GamesList.DTOs.Requests;
-using GamesList.Services;
+using GamesList.Services.AvaliacaoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +8,9 @@ namespace GamesList.Controllers
 
     [ApiController]
     [Route("api/avaliacoes")]
-    public class AvaliacaoController(AvaliacaoService avaliacaoService, ILogger<AvaliacaoController> logger) : ApiControllerBase<AvaliacaoController>(logger)
+    public class AvaliacaoController(IAvaliacaoService avaliacaoService, ILogger<AvaliacaoController> logger) : ApiControllerBase<AvaliacaoController>(logger)
     {
-        private readonly AvaliacaoService _avaliacaoService = avaliacaoService;
+        private readonly IAvaliacaoService _avaliacaoService = avaliacaoService;
 
 
         [HttpGet("jogo/{id}")]

@@ -1,11 +1,11 @@
-using System.Threading.Tasks;
 using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.Models;
 using static GamesList.DTOs.Helpers.Results;
-namespace GamesList.Services
+
+namespace GamesList.Services.ImagensSugestaoService
 {
-    public class ImagensSugestaoService(AppDbContext appDbContext, ILogger<ImagensSugestaoService> logger)
+    public class ImagensSugestaoService(AppDbContext appDbContext, ILogger<ImagensSugestaoService> logger) : IImagensSugestaoService
     {
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly ILogger<ImagensSugestaoService> _logger = logger;

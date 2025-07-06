@@ -1,12 +1,11 @@
-using System.Net.Mime;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using GamesList.DTOs;
 using static GamesList.DTOs.Helpers.Results;
 
-namespace GamesList.Services
+namespace GamesList.Services.BlobService
 {
-    public class BlobService
+    public class BlobService : IBlobService
     {
         private readonly ILogger<BlobService> _logger;
         private readonly BlobContainerClient _containerClient;

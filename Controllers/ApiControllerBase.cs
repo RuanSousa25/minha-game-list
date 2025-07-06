@@ -4,16 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 namespace GamesList.Controllers
 {
     [ApiController]
-    public abstract class ApiControllerBase : ControllerBase
+    public abstract class ApiControllerBase<C>(ILogger<C> logger) : ControllerBase
     {
+        private readonly ILogger<C> _logger = logger;
         protected IActionResult FromResult<T>(ServiceResultDto<T> result)
         {
             if (result == null)
+            {
+                _logger.LogError("ServiceResultDto nulo em {controller}.", GetType().Name);
                 return StatusCode(500, "Erro interno no servidor.");
-
+            }
             if (!result.Success)
+            {
+                _logger.LogError("ServiceResultDto falhou em {controller}.", GetType().Name);
                 return StatusCode(result.StatusCode == 0 ? 500 : result.StatusCode, result.Message);
-
+            }
             return StatusCode(result.StatusCode == 0 ? 200 : result.StatusCode, result.Data);
         }
 

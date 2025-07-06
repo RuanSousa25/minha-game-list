@@ -9,7 +9,7 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(SugerirJogoService sugerirJogoService) : ApiControllerBase
+    public class SugerirJogoController(SugerirJogoService sugerirJogoService, ILogger<SugerirJogoController> logger) : ApiControllerBase<SugerirJogoController>(logger)
     {
         private readonly SugerirJogoService _sugerirJogoService = sugerirJogoService;
         private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };

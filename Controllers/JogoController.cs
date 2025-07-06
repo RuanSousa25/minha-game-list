@@ -9,7 +9,7 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/jogos")]
-    public class JogoController(JogoService jogoService) : ApiControllerBase
+    public class JogoController(JogoService jogoService, ILogger<JogoController> logger) : ApiControllerBase<JogoController>(logger)
     {
         private readonly JogoService _jogoService = jogoService;
 

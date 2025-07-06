@@ -8,9 +8,10 @@ namespace GamesList.Controllers
 
     [ApiController]
     [Route("api/avaliacoes")]
-    public class AvaliacaoController(AvaliacaoService avaliacaoService) : ApiControllerBase
+    public class AvaliacaoController(AvaliacaoService avaliacaoService, ILogger<AvaliacaoController> logger) : ApiControllerBase<AvaliacaoController>(logger)
     {
         private readonly AvaliacaoService _avaliacaoService = avaliacaoService;
+
 
         [HttpGet("jogo/{id}")]
         public async Task<IActionResult> GetAvaliacoesByJogoId([FromRoute] int id)

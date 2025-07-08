@@ -1,4 +1,5 @@
 using System.Text.Json;
+using GamesList.DTOs.Helpers;
 using GamesList.DTOs.Requests;
 using GamesList.Services.SugerirJogoService;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ namespace GamesList.Controllers
             {
                 return BadRequest("Sugestão inválida. JSON não correspondente.");
             }
-            
+
             if (request == null) return BadRequest("Não há sugestão para inserir.");
             if (imagem == null) return BadRequest("Não há imagem para a sugestão.");
             if (GetUserId() is not int userId) return Unauthorized();
@@ -52,6 +53,22 @@ namespace GamesList.Controllers
         public async Task<IActionResult> AprovarJogo([FromRoute] int id)
         {
             var result = await _sugerirJogoService.AprovarJogo(id);
+            return FromResult(result);
+        }
+        [HttpPost("reprovar/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ReprovarJogo([FromRoute] int id)
+        {
+            var sugestaoResult = await _sugerirJogoService.FindSugestaoJogo(id);
+            if (sugestaoResult == null) return NotFound("Sugestão de jogo não encontrada");
+            if (!sugestaoResult.Success) return FromResult(sugestaoResult);
+
+            var data = sugestaoResult.Data;
+            var userId = ClaimsHelper.GetUserId(User);
+            var userRole = ClaimsHelper.GetUserRole(User);
+            if (data.UsuarioId != userId && userRole != "admin") return Forbid();
+
+            var result = await _sugerirJogoService.RemoverSugestaoJogo(id);
             return FromResult(result);
         }
         

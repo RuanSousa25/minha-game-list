@@ -65,7 +65,6 @@ namespace GamesList.Services.AuthService
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             _logger.LogInformation("Token criado.");
             return Ok(jwt);
-
         }
     }
 }

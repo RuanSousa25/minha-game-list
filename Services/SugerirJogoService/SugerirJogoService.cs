@@ -78,5 +78,29 @@ namespace GamesList.Services.SugerirJogoService
 
             return Ok(sugestoes);
         }
+        public async Task<ServiceResultDto<string>> RemoverSugestaoJogo(int id)
+        {
+            var sugestao = await _appDbContext.SugerirJogo.Include(s => s.Generos).Include(s => s.Imagens).FirstOrDefaultAsync(s => s.Id == id);
+            if (sugestao == null)
+            {
+                _logger.LogWarning("Sugestão de Id {id} não encontrada.", id);
+                return NotFound<string>("Sugestão não encontrada.");
+            }
+            _appDbContext.SugerirJogo.Remove(sugestao);
+            _appDbContext.ImagensSugestao.RemoveRange(sugestao.Imagens); //criar service dedicado
+            await _appDbContext.SaveChangesAsync();
+            _logger.LogInformation("Sugestão de Id {id} foi removida com sucesso.", id);
+            return Ok("Sugestão removida com sucesso.");
+        }
+        public async Task<ServiceResultDto<SugerirJogo>> FindSugestaoJogo(int id)
+        {
+            var sugestao = await _appDbContext.SugerirJogo.FindAsync(id);
+            if (sugestao == null)
+            {
+                _logger.LogWarning("Sugestão de Id {id} não encontrada.", id);
+                return NotFound<SugerirJogo>("Sugestão não encontrada");
+            }
+            return Ok(sugestao);
+        } 
     }
 }

@@ -24,6 +24,20 @@ namespace GamesList.Services.AvaliacaoService
             return Ok(avaliacoes);
         }
 
+        public async Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoId(int id)
+        {
+            var getResult = await GetAvaliacoesByJogoId(id);
+            if (getResult == null) {
+                _logger.LogError("Não foi possível remover as avaliações do jogo de Id {id}", id);
+                return ServerError<string>("Não foi possível remover as avaliações");
+            }
+            var avaliacoes = getResult.Data;
+            
+            _appDbContext.Avaliacoes.RemoveRange(avaliacoes!);
+            _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
+            return Ok("Remoção de avaliações realizada com sucesso.");
+        }
+
         public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
             var jogoExiste = await _appDbContext.Jogos.AnyAsync(j => j.Id == request.JogoId);

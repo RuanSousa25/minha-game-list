@@ -1,44 +1,38 @@
 using GamesList.Databases;
 using GamesList.DTOs;
+using GamesList.Repositories.JogoRepository;
+using GamesList.Services.AvaliacaoService;
+using GamesList.Services.ImagensService;
 using Microsoft.EntityFrameworkCore;
 using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.JogoService
 {
-    public class JogoService(AppDbContext appDbContext, ILogger<JogoService> logger) : IJogoService
+    public class JogoService(IJogoRepository jogoRepository, IImagensService imagensService, IAvaliacaoService avaliacaoService, ILogger<JogoService> logger) : IJogoService
     {
         private readonly ILogger<JogoService> _logger = logger;
-        private readonly AppDbContext _appDbContext = appDbContext;
-
+        private readonly IJogoRepository _repository = jogoRepository;
+        private readonly IImagensService _imagensService = imagensService;
+        private readonly IAvaliacaoService _avaliacaoService = avaliacaoService;
         public async Task<ServiceResultDto<List<JogoDTO>>> GetJogosList()
         {
-            var jogos = await _appDbContext.Jogos
-            .Include(j => j.Avaliacoes)
-            .Include(j => j.Generos)
-            .Include(j => j.Imagens)
-            .Select(j => new JogoDTO(j))
-            .ToListAsync();
-
-            return Ok(jogos);
+            var jogos = await _repository.GetJogosAsync();
+            return Ok(jogos.Select(j => new JogoDTO(j)).ToList());
         }
         public async Task<ServiceResultDto<string>> RemoveJogo(int id)
         {
-            var jogo = await _appDbContext.Jogos
-            .Include(j => j.Avaliacoes)
-            .Include(j => j.Generos)
-            .Include(j => j.Imagens)
-            .FirstOrDefaultAsync(j => j.Id == id);
+            var jogo = await _repository.GetJogoComRelacionamentoByIdAsync(id);
             if (jogo == null)
             {
                 _logger.LogWarning("Jogo {id} não econtrado no banco de dados.", id);
                 return NotFound<string>("Jogo não encontrado.");
             }
             jogo.Generos.Clear();
-            _appDbContext.Avaliacoes.RemoveRange(jogo.Avaliacoes);
-            _appDbContext.Imagens.RemoveRange(jogo.Imagens);
+            await _avaliacaoService.RemoveAvaliacoesByJogoId(id);
+            await _imagensService.RemoveImagensByJogoId(id);
             try
             {
-                await _appDbContext.SaveChangesAsync();
+                await _repository.SaveChangesAsync();
             }
             catch (Exception e)
             {

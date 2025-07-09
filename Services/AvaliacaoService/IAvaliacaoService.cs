@@ -9,5 +9,6 @@ namespace GamesList.Services.AvaliacaoService
         public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id);
         public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id);
         public Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request);
+        public Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoId(int id);
     }
 }

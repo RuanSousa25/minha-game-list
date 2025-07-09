@@ -1,0 +1,46 @@
+using GamesList.Databases;
+using GamesList.DTOs;
+using GamesList.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace GamesList.Repositories.JogoRepository
+{
+    public class JogoRepository(AppDbContext appDbContext) : IJogoRepository
+    {
+        private readonly AppDbContext _appDbContext = appDbContext;
+
+        public async Task<Jogo?> GetJogoComRelacionamentoByIdAsync(int id)
+        {
+            var jogo =
+            await _appDbContext.Jogos
+            .Include(j => j.Avaliacoes)
+            .Include(j => j.Generos)
+            .Include(j => j.Imagens)
+            .FirstOrDefaultAsync(j => j.Id == id);
+            return jogo;
+        }
+
+        public async Task<List<Jogo>> GetJogosAsync()
+        {
+            var jogos =
+            await _appDbContext.Jogos
+            .Include(j => j.Avaliacoes)
+            .Include(j => j.Generos)
+            .Include(j => j.Imagens)
+            .ToListAsync();
+            return jogos;
+        }
+
+        public async Task<bool> RemoveJogoByIdAsync(int id)
+        {
+            var jogo = await _appDbContext.Jogos.FindAsync(id);
+            if (jogo == null) return false;
+            _appDbContext.Jogos.Remove(jogo);
+            return true;
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _appDbContext.SaveChangesAsync();
+        }
+    }
+}

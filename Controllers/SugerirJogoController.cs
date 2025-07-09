@@ -67,7 +67,6 @@ namespace GamesList.Controllers
             var userId = ClaimsHelper.GetUserId(User);
             var userRole = ClaimsHelper.GetUserRole(User);
             if (data.UsuarioId != userId && userRole != "admin") return Forbid();
-
             var result = await _sugerirJogoService.RemoverSugestaoJogo(id);
             return FromResult(result);
         }

@@ -18,6 +18,20 @@ namespace GamesList.Services.BlobService
             _containerClient = new BlobContainerClient(connString, containerName);
             _logger = logger;
         }
+
+        public async Task<ServiceResultDto<string>> DeleteFileAsync(string url)
+        {
+            var filename = Path.GetFileName(new Uri(url).LocalPath.TrimStart('/'));
+            var blob = _containerClient.GetBlobClient(filename);
+
+            var response = await blob.DeleteIfExistsAsync();
+            if (response)
+                return Ok("Imagem apagada com sucesso");
+
+            _logger.LogError("Não foi possível apagar o blob {url}", url);
+            return ServerError<string>("Não foi possível apagar o blob");
+        }
+
         public async Task<ServiceResultDto<string>> UploadFileAsync(Stream fileStream, string fileName, string contentType)
         {
 

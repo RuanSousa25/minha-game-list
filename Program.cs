@@ -1,8 +1,10 @@
 using System.Text;
 using GamesList.Databases;
+using GamesList.Repositories.JogoRepository;
 using GamesList.Services.AuthService;
 using GamesList.Services.AvaliacaoService;
 using GamesList.Services.BlobService;
+using GamesList.Services.ImagensService;
 using GamesList.Services.ImagensSugestaoService;
 using GamesList.Services.JogoService;
 using GamesList.Services.SugerirJogoService;
@@ -33,12 +35,17 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionSt
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null)));
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IJogoRepository, JogoRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJogoService, JogoService>();
 builder.Services.AddScoped<IImagensSugestaoService, ImagensSugestaoService>();
+builder.Services.AddScoped<IImagensService, ImagensServices>();
 builder.Services.AddScoped<ISugerirJogoService, SugerirJogoService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

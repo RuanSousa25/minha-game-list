@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.Models;
@@ -8,6 +9,16 @@ namespace GamesList.Repositories.JogoRepository
     public class JogoRepository(AppDbContext appDbContext) : IJogoRepository
     {
         private readonly AppDbContext _appDbContext = appDbContext;
+
+        public async Task AddJogoAsync(Jogo jogo)
+        {
+            await _appDbContext.Jogos.AddAsync(jogo);
+        }
+
+        public async Task<bool> CheckIfJogoExistsAsync(int id)
+        {
+            return await _appDbContext.Jogos.AnyAsync(j => j.Id == id);
+        }
 
         public async Task<Jogo?> GetJogoComRelacionamentoByIdAsync(int id)
         {
@@ -37,10 +48,6 @@ namespace GamesList.Repositories.JogoRepository
             if (jogo == null) return false;
             _appDbContext.Jogos.Remove(jogo);
             return true;
-        }
-        public async Task SaveChangesAsync()
-        {
-            await _appDbContext.SaveChangesAsync();
         }
     }
 }

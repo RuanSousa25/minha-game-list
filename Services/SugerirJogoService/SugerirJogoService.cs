@@ -2,6 +2,7 @@ using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
+using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.BlobService;
 using GamesList.Services.ImagensSugestaoService;
 using Microsoft.EntityFrameworkCore;
@@ -9,19 +10,19 @@ using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.SugerirJogoService
 {
-    public class SugerirJogoService(AppDbContext appDbContext, IBlobService blobService, IImagensSugestaoService imagensServices, ILogger<SugerirJogoService> logger) : ISugerirJogoService
+    public class SugerirJogoService(IUnitOfWork uow, IBlobService blobService, IImagensSugestaoService imagensServices, ILogger<SugerirJogoService> logger) : ISugerirJogoService
     {
-        private readonly AppDbContext _appDbContext = appDbContext;
+        private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IBlobService _blobService = blobService;
         private readonly IImagensSugestaoService _imagensServices = imagensServices;
         private readonly ILogger<SugerirJogoService> _logger = logger;
 
         public async Task<ServiceResultDto<int>> SaveSugestaoJogo(UploadGameRequest request, int userId)
         {
-            var generos = _appDbContext.Generos.Where(g => request.Generos.Contains(g.Id)).ToList();
+            var generos = await _unitOfWork.GenerosRepository.GetGenerosByGenerosIdsAsync([.. request.Generos]);
             var sugestao = new SugerirJogo { UsuarioId = userId, Nome = request.Nome, Generos = generos, DataSugestao = DateTime.UtcNow, Aprovado = false };
-            _appDbContext.SugerirJogo.Add(sugestao);
-            await _appDbContext.SaveChangesAsync();
+            await _unitOfWork.SugerirJogoRepository.AddSugerirJogoAsync(sugestao);
+            await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Sugestão de jogo {nome} inserida com sucesso. Id da sugestão: {id}", sugestao.Nome, sugestao.Id);
             return Ok(sugestao.Id);
         }
@@ -43,11 +44,7 @@ namespace GamesList.Services.SugerirJogoService
         public async Task<ServiceResultDto<JogoDTO>> AprovarJogo(int id)
         {
             var sugestao =
-            await _appDbContext.SugerirJogo
-            .Include(s => s.Generos)
-            .Include(s => s.Imagens)
-            .FirstOrDefaultAsync(s => s.Id == id);
-
+            await _unitOfWork.SugerirJogoRepository.GetSugerirJogoComRelacoesByIdAsync(id);
             if (sugestao == null)
             {
                 _logger.LogWarning("Não foi encontrada a sugestão de {id}", id);
@@ -55,46 +52,41 @@ namespace GamesList.Services.SugerirJogoService
             }
             sugestao.Aprovado = true;
 
-            var jogo = new Jogo { Generos = sugestao.Generos.ToList(), Nome = sugestao.Nome };
-            await _appDbContext.Jogos.AddAsync(jogo);
-            await _appDbContext.SaveChangesAsync();
+            var jogo = new Jogo { Generos = [.. sugestao.Generos], Nome = sugestao.Nome };
+            await _unitOfWork.JogoRepository.AddJogoAsync(jogo); //criar service dedicado
+           
 
             var imagens = sugestao.Imagens;
             foreach (var imagem in imagens)
             {
-                await _appDbContext.Imagens.AddAsync(new Imagem { Url = imagem.Url, JogoId = jogo.Id, TipoId = imagem.TipoId });
+                await _unitOfWork.ImagensRepository.AddImagemAsync(new Imagem { Url = imagem.Url, JogoId = jogo.Id, TipoId = imagem.TipoId });
             }
-            await _appDbContext.SaveChangesAsync();
+             await _unitOfWork.CommitChangesAsync();
             return Ok(new JogoDTO(jogo));
         }
 
         public async Task<ServiceResultDto<List<SugerirJogo>>> ListSugerirJogo()
         {
-            var sugestoes =
-            await _appDbContext.SugerirJogo
-            .Include(s => s.Generos)
-            .Include(s => s.Imagens)
-            .ToListAsync();
-
+            var sugestoes = await _unitOfWork.SugerirJogoRepository.ListSugerirJogosAsync();
             return Ok(sugestoes);
         }
         public async Task<ServiceResultDto<string>> RemoverSugestaoJogo(int id)
         {
-            var sugestao = await _appDbContext.SugerirJogo.Include(s => s.Generos).Include(s => s.Imagens).FirstOrDefaultAsync(s => s.Id == id);
+            var sugestao = await _unitOfWork.SugerirJogoRepository.GetSugerirJogoComRelacoesByIdAsync(id);
             if (sugestao == null)
             {
                 _logger.LogWarning("Sugestão de Id {id} não encontrada.", id);
                 return NotFound<string>("Sugestão não encontrada.");
             }
-            _appDbContext.SugerirJogo.Remove(sugestao);
-            _appDbContext.ImagensSugestao.RemoveRange(sugestao.Imagens); //criar service dedicado
-            await _appDbContext.SaveChangesAsync();
+            _unitOfWork.SugerirJogoRepository.RemoveSugestao(sugestao);
+            _unitOfWork.ImagensSugestaoRepository.RemoveSugestaoImagens([.. sugestao.Imagens]); //criar service dedicado
+            await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Sugestão de Id {id} foi removida com sucesso.", id);
             return Ok("Sugestão removida com sucesso.");
         }
         public async Task<ServiceResultDto<SugerirJogo>> FindSugestaoJogo(int id)
         {
-            var sugestao = await _appDbContext.SugerirJogo.FindAsync(id);
+            var sugestao = await _unitOfWork.SugerirJogoRepository.GetSugerirJogoByIdAsync(id);
             if (sugestao == null)
             {
                 _logger.LogWarning("Sugestão de Id {id} não encontrada.", id);

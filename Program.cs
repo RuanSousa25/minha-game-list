@@ -1,6 +1,13 @@
 using System.Text;
 using GamesList.Databases;
+using GamesList.Repositories.AuthRepository;
+using GamesList.Repositories.AvaliacaoRepository;
+using GamesList.Repositories.GenerosRepository;
+using GamesList.Repositories.ImagensRepository;
+using GamesList.Repositories.ImagensSugestaoRepository;
 using GamesList.Repositories.JogoRepository;
+using GamesList.Repositories.SugerirJogoRepository;
+using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.AuthService;
 using GamesList.Services.AvaliacaoService;
 using GamesList.Services.BlobService;
@@ -36,15 +43,22 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionSt
                 errorNumbersToAdd: null)));
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
+builder.Services.AddScoped<IGenerosRepository, GenerosRepository>();
+builder.Services.AddScoped<IImagensRepository, ImagensRepository>();
+builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
+builder.Services.AddScoped<ISugerirJogoRepository, SugerirJogoRepository>();
+builder.Services.AddScoped<IImagensSugestaoRepository, ImagensSugestaoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJogoService, JogoService>();
-builder.Services.AddScoped<IImagensSugestaoService, ImagensSugestaoService>();
 builder.Services.AddScoped<IImagensService, ImagensServices>();
-builder.Services.AddScoped<ISugerirJogoService, SugerirJogoService>();
 builder.Services.AddScoped<IBlobService, BlobService>();
-builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>();
+builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>(); 
+builder.Services.AddScoped<ISugerirJogoService, SugerirJogoService>();
+builder.Services.AddScoped<IImagensSugestaoService, ImagensSugestaoService>();
 
 builder.Services.AddCors(options =>
 {

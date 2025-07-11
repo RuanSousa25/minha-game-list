@@ -1,26 +1,25 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
-using Microsoft.EntityFrameworkCore;
+using GamesList.Repositories.UnitOfWork;
 using Microsoft.IdentityModel.Tokens;
 using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.AuthService
 {
-    public class AuthService(AppDbContext appDbContext, IConfiguration config, ILogger<AuthService> logger) : IAuthService
+    public class AuthService(IUnitOfWork uow, IConfiguration config, ILogger<AuthService> logger) : IAuthService
     {
         private readonly ILogger<AuthService> _logger = logger;
-        private readonly AppDbContext _appDbContext = appDbContext;
+        private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IConfiguration _config = config;
 
 
         public async Task<ServiceResultDto<string>> Register(RegisterRequest request)
         {
-            if (_appDbContext.Usuarios.Any(u => u.Login == request.Login))
+            if (_unitOfWork.AuthRepository.CheckIfUsuarioExists(request.Login))
             {
                 _logger.LogWarning("Usuário {usuario} já existe no banco de dados.", request.Login);
                 return Conflict<string>("Usuário já existe");
@@ -29,8 +28,8 @@ namespace GamesList.Services.AuthService
 
             var user = new Usuario { Login = request.Login, SenhaHash = hash };
 
-            _appDbContext.Usuarios.Add(user);
-            await _appDbContext.SaveChangesAsync();
+            await _unitOfWork.AuthRepository.AddUsuarioAsync(user);
+            await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Usuário cadastrado.");
             return Ok("Usuario Cadastrado");
         }
@@ -38,7 +37,7 @@ namespace GamesList.Services.AuthService
         public async Task<ServiceResultDto<string>> Login(LoginRequest request)
         {
 
-            var user = await _appDbContext.Usuarios.SingleOrDefaultAsync(u => u.Login == request.Login);
+            var user = await _unitOfWork.AuthRepository.GetUsuarioByLoginAsync(request.Login);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Senha, user.SenhaHash))
             {
                  _logger.LogWarning("Credenciais incorretas.");

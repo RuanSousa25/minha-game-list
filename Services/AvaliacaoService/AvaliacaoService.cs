@@ -1,46 +1,44 @@
-using GamesList.Databases;
 using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
-using Microsoft.EntityFrameworkCore;
+using GamesList.Repositories.UnitOfWork;
 using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.AvaliacaoService
 {
-    public class AvaliacaoService(AppDbContext appDbContext, ILogger<AvaliacaoService> logger) : IAvaliacaoService
+    public class AvaliacaoService(IUnitOfWork uow, ILogger<AvaliacaoService> logger) : IAvaliacaoService
     {
         private readonly ILogger<AvaliacaoService> _logger = logger;
-        private readonly AppDbContext _appDbContext = appDbContext;
+        private readonly IUnitOfWork _unitOfWork = uow;
 
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
         {
-            var avaliacoes = await _appDbContext.Avaliacoes.Where(a => a.JogoId == id).ToListAsync();
+            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
             return Ok(avaliacoes);
         }
 
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id)
         {
-            var avaliacoes = await _appDbContext.Avaliacoes.Where(a => a.UsuarioId == id).ToListAsync();
+            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdAsync(id);
             return Ok(avaliacoes);
         }
 
         public async Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoId(int id)
         {
-            var getResult = await GetAvaliacoesByJogoId(id);
-            if (getResult == null) {
-                _logger.LogError("Não foi possível remover as avaliações do jogo de Id {id}", id);
-                return ServerError<string>("Não foi possível remover as avaliações");
+            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
+            if (avaliacoes == null || avaliacoes.Count == 0)
+            {
+                _logger.LogWarning("Nenhuma avaliação encontrada para o jogo de Id {id}", id);
+                return NotFound<string>("Nenhuma avaliação encontrada.");
             }
-            var avaliacoes = getResult.Data;
-            
-            _appDbContext.Avaliacoes.RemoveRange(avaliacoes!);
+            _unitOfWork.AvaliacaoRepository.RemoveAvaliacoes(avaliacoes);
             _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
             return Ok("Remoção de avaliações realizada com sucesso.");
         }
 
         public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
-            var jogoExiste = await _appDbContext.Jogos.AnyAsync(j => j.Id == request.JogoId);
+            var jogoExiste = await _unitOfWork.JogoRepository.CheckIfJogoExistsAsync(request.JogoId);
 
             if (!jogoExiste)
             {
@@ -53,14 +51,12 @@ namespace GamesList.Services.AvaliacaoService
                 return BadRequest<string>("Nota inválida. Deve ser entre 0 e 10.");
             }
 
-            var avaliacao =
-            await _appDbContext.Avaliacoes
-            .FirstOrDefaultAsync(a => a.UsuarioId == userId && a.JogoId == request.JogoId);
+            var avaliacao = await _unitOfWork.AvaliacaoRepository.GetAvaliacaoByUsuarioIdAndJogoIdAsync(userId, request.JogoId);
 
             if (avaliacao == null)
             {
                 avaliacao = new Avaliacao { UsuarioId = userId, Nota = request.Nota, Opiniao = request.Opiniao, Data = DateTime.UtcNow, JogoId = request.JogoId };
-                await _appDbContext.Avaliacoes.AddAsync(avaliacao);
+                await _unitOfWork.AvaliacaoRepository.AddAvaliacaoAsync(avaliacao);
                 _logger.LogInformation("Avaliação nova adicionada. Jogo: {jogoId} | Usuario: {userId}", request.JogoId, userId);
             }
             else
@@ -68,12 +64,12 @@ namespace GamesList.Services.AvaliacaoService
                 avaliacao.Data = DateTime.UtcNow;
                 avaliacao.Opiniao = request.Opiniao;
                 avaliacao.Nota = request.Nota;
-                _appDbContext.Update(avaliacao);
+                _unitOfWork.AvaliacaoRepository.UpdateAvaliacao(avaliacao);
                 _logger.LogInformation("Avaliação atualizada. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
             }
 
             try {
-                await _appDbContext.SaveChangesAsync();
+                await _unitOfWork.CommitChangesAsync();
                  _logger.LogInformation("Commit de avaliação realizado. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
                 return Ok("Avaliação postada com sucesso.");
             } catch (Exception ex) {

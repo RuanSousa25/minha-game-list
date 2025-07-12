@@ -1,5 +1,6 @@
 using GamesList.Databases;
 using GamesList.DTOs;
+using GamesList.Models;
 using GamesList.Repositories.JogoRepository;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.AvaliacaoService;
@@ -30,7 +31,7 @@ namespace GamesList.Services.JogoService
             }
             jogo.Generos.Clear();
             await _avaliacaoService.RemoveAvaliacoesByJogoId(id);
-            await _imagensService.RemoveImagensByJogoId(id);
+            await _imagensService.RemoveImagensByJogoIdAsync(id);
             try
             {
                 await _unitOfWork.CommitChangesAsync();
@@ -42,6 +43,11 @@ namespace GamesList.Services.JogoService
             }
             _logger.LogInformation("Jogo {nome} foi removido com sucesso. JogoId: {id}", jogo.Nome, jogo.Id);
             return Ok("Exclusão realizada com sucesso");
+        }
+        public async Task<ServiceResultDto<Jogo>> AddJogoAsync(Jogo jogo)
+        {
+            await _unitOfWork.JogoRepository.AddJogoAsync(jogo);
+            return Ok(jogo);
         }
     }
 }

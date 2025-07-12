@@ -20,6 +20,18 @@ namespace GamesList.Services.ImagensSugestaoService
             _logger.LogInformation("Imagem {img} inserida com sucesso.", url);
             return Ok("Imagem inserida com sucesso");
         }
+        public ServiceResultDto<string> RemoveSugestaoImagens(List<ImagensSugestao> imagens)
+        {
+                _unitOfWork.ImagensSugestaoRepository.RemoveSugestaoImagens(imagens);
+                _logger.LogInformation("Removidas {count} sugestões de imagens.", imagens.Count);
+                return Ok("Imagens removidas.");
+        }
+        public async Task<ServiceResultDto<string>> AddImagemAsync(ImagensSugestao imagem)
+        {
+            await _unitOfWork.ImagensSugestaoRepository.AddImagemAsync(imagem);
+            _logger.LogInformation("Imagem {id} adicionada do banco.", imagem.Id);
+            return Ok("Imagem Adicionada com sucesso.");
+        }
         
     }
 }

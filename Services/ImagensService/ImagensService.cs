@@ -1,5 +1,6 @@
 using GamesList.Databases;
 using GamesList.DTOs;
+using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.BlobService;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,13 @@ namespace GamesList.Services.ImagensService
         private readonly IBlobService _blobService = blobService;
         private readonly IUnitOfWork _unitOfWork = uow;
 
-        public async Task<ServiceResultDto<string>> RemoveImagensByJogoId(int id)
+        public async Task<ServiceResultDto<string>> AddImagemAsync(Imagem imagem)
+        {
+            await _unitOfWork.ImagensRepository.AddImagemAsync(imagem);
+            return Ok("Imagem adicionada com sucesso");
+        }
+
+        public async Task<ServiceResultDto<string>> RemoveImagensByJogoIdAsync(int id)
         {
             var imagens = await _unitOfWork.ImagensRepository.GetImagensByJogoId(id);
 

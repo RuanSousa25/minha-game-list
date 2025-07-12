@@ -1,4 +1,5 @@
 using GamesList.DTOs;
+using GamesList.Models;
 
 namespace GamesList.Services.JogoService
 {
@@ -6,5 +7,6 @@ namespace GamesList.Services.JogoService
     {
         public Task<ServiceResultDto<List<JogoDTO>>> GetJogosList();
         public Task<ServiceResultDto<string>> RemoveJogo(int id);
+        public Task<ServiceResultDto<Jogo>> AddJogoAsync(Jogo jogo);
     }
 }

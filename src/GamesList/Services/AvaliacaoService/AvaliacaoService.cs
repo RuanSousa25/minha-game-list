@@ -2,14 +2,16 @@ using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
+using GamesList.Services.JogoService;
 using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.AvaliacaoService
 {
-    public class AvaliacaoService(IUnitOfWork uow, ILogger<AvaliacaoService> logger) : IAvaliacaoService
+    public class AvaliacaoService(IUnitOfWork uow, IJogoService jogoService, ILogger<AvaliacaoService> logger) : IAvaliacaoService
     {
         private readonly ILogger<AvaliacaoService> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = uow;
+        private readonly IJogoService _jogoService = jogoService;
 
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
         {
@@ -38,8 +40,9 @@ namespace GamesList.Services.AvaliacaoService
 
         public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
-            var jogoExiste = await _unitOfWork.JogoRepository.CheckIfJogoExistsAsync(request.JogoId);
-
+            var resultDto = await _jogoService.CheckIfJogoExistsAsync(request.JogoId);
+            if (!resultDto.Success) return new ServiceResultDto<string>{StatusCode = resultDto.StatusCode, Message = resultDto.Message};
+            var jogoExiste = resultDto.Data;
             if (!jogoExiste)
             {
                 _logger.LogWarning("Tentativa de avaliação para jogo inexistente. jogo: {id} | Usuario: {userId}.", request.JogoId, userId);

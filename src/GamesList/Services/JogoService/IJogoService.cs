@@ -8,5 +8,6 @@ namespace GamesList.Services.JogoService
         public Task<ServiceResultDto<List<JogoDTO>>> GetJogosList();
         public Task<ServiceResultDto<string>> RemoveJogo(int id);
         public Task<ServiceResultDto<Jogo>> AddJogoAsync(Jogo jogo);
+        public Task<ServiceResultDto<bool>> CheckIfJogoExistsAsync(int id);
     }
 }

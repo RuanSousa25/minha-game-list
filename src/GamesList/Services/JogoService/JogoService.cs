@@ -49,5 +49,10 @@ namespace GamesList.Services.JogoService
             await _unitOfWork.JogoRepository.AddJogoAsync(jogo);
             return Ok(jogo);
         }
+        public async Task<ServiceResultDto<bool>> CheckIfJogoExistsAsync(int id)
+        {
+            var result = await _unitOfWork.JogoRepository.CheckIfJogoExistsAsync(id);
+            return Ok(result);
+        }
     }
 }

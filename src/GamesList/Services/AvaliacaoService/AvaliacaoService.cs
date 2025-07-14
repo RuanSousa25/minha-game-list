@@ -13,6 +13,11 @@ namespace GamesList.Services.AvaliacaoService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IJogoService _jogoService = jogoService;
 
+
+        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoById()
+        {
+            throw new NotImplementedException();
+        }
         public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
@@ -37,11 +42,30 @@ namespace GamesList.Services.AvaliacaoService
             _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
             return Ok("Remoção de avaliações realizada com sucesso.");
         }
+        public async Task<ServiceResultDto<string>> RemoveAvaliacaoById(int id, int userId, bool isAdmin)
+        {
+            var avaliacao = await _unitOfWork.AvaliacaoRepository.GetAvaliacaoByIdAsync(id);
+            if (avaliacao == null)
+            {
+                _logger.LogWarning("Avaliação de id {id} não encontrada.", id);
+                return NotFound<string>("A avaliação não foi encontrada.");
+            }
+            if (avaliacao.UsuarioId != userId && !isAdmin)
+            {
+                _logger.LogWarning("Usuário de id {id} não tem permissão o suficiente para remover a avaliação de id {id2}", id, userId);
+                return Forbidden<string>("Você não tem permissão para remover essa avaliação.");
+            }
+
+            _unitOfWork.AvaliacaoRepository.RemoveAvaliacao(avaliacao);
+            await _unitOfWork.CommitChangesAsync();
+            _logger.LogInformation("A avaliação de id {id} foi removida com sucesso.", id);
+            return Ok("Avaliação removida com sucesso.");
+        }
 
         public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
         {
             var resultDto = await _jogoService.CheckIfJogoExistsAsync(request.JogoId);
-            if (!resultDto.Success) return new ServiceResultDto<string>{StatusCode = resultDto.StatusCode, Message = resultDto.Message};
+            if (!resultDto.Success) return new ServiceResultDto<string> { StatusCode = resultDto.StatusCode, Message = resultDto.Message };
             var jogoExiste = resultDto.Data;
             if (!jogoExiste)
             {
@@ -50,7 +74,7 @@ namespace GamesList.Services.AvaliacaoService
             }
             if (request.Nota < 0 || request.Nota > 10)
             {
-                _logger.LogWarning("Nota inválida (abaixo de 0 ou acima de 10). valor da nota: {nota}| jogo: {jogoId} | Usuario: {userId}.", request.Nota,request.JogoId, userId);
+                _logger.LogWarning("Nota inválida (abaixo de 0 ou acima de 10). valor da nota: {nota}| jogo: {jogoId} | Usuario: {userId}.", request.Nota, request.JogoId, userId);
                 return BadRequest<string>("Nota inválida. Deve ser entre 0 e 10.");
             }
 
@@ -71,14 +95,18 @@ namespace GamesList.Services.AvaliacaoService
                 _logger.LogInformation("Avaliação atualizada. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
             }
 
-            try {
+            try
+            {
                 await _unitOfWork.CommitChangesAsync();
-                 _logger.LogInformation("Commit de avaliação realizado. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
+                _logger.LogInformation("Commit de avaliação realizado. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
                 return Ok("Avaliação postada com sucesso.");
-            } catch (Exception ex) {
-                 _logger.LogError("Erro no commit da avaliação. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId} | Ex: {ex}", avaliacao.Id, request.JogoId, userId, ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Erro no commit da avaliação. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId} | Ex: {ex}", avaliacao.Id, request.JogoId, userId, ex);
                 return ServerError<string>("Erro ao salvar avaliação.");
             }
         }
+
     }
 }

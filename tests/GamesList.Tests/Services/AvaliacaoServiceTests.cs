@@ -27,7 +27,34 @@ namespace GamesList.Tests.Services
             _mockUow.Setup(u => u.AvaliacaoRepository).Returns(_mockAvaliacaoRepo.Object);
             _service = new AvaliacaoService(_mockUow.Object, _mockJogoService.Object, _mockLogger.Object);
         }
+        [Fact]
+        public async Task RemoveAvaliacao_UsuarioNaoAutorizado_DeveNegarRemocao()
+        {
+            int userId = 10;
+            var avaliacao = new Avaliacao
+            {
+                Id = 12,
+                UsuarioId = 5,
+                JogoId = 2,
+                Nota = 7,
+                Opiniao = "Jogo melhor do que o esperado",
+                Data = DateTime.UtcNow.AddDays(-5)
+            };
 
+            _mockAvaliacaoRepo.Setup(a => a.GetAvaliacaoByIdAsync(avaliacao.Id)).ReturnsAsync(avaliacao);
+
+
+            var result = await _service.RemoveAvaliacaoById(avaliacao.Id, userId, false);
+
+            Assert.False(result.Success);
+            Assert.Equal(403, result.StatusCode);
+            Assert.Contains("permissão", result.Message);
+            Assert.Null(result.Data);
+
+            _mockAvaliacaoRepo.Verify(a => a.RemoveAvaliacao(avaliacao), Times.Never);
+            _mockUow.Verify(u => u.CommitChangesAsync(), Times.Never);
+
+        }
         [Fact]
         public async Task SaveAvalicao_UsuarioJaAvaliou_DeveAtualizarAvaliacaoExistente()
         {

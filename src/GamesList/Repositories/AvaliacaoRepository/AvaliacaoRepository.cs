@@ -12,6 +12,10 @@ namespace GamesList.Repositories.AvaliacaoRepository
         {
             await _appDbContext.Avaliacoes.AddAsync(avaliacao);
         }
+        public async Task<Avaliacao?> GetAvaliacaoByIdAsync(int id)
+        {
+            return await _appDbContext.Avaliacoes.FindAsync(id);
+        }
 
         public async Task<Avaliacao?> GetAvaliacaoByUsuarioIdAndJogoIdAsync(int usuarioId, int jogoId)
         {
@@ -27,6 +31,11 @@ namespace GamesList.Repositories.AvaliacaoRepository
         public async Task<List<Avaliacao>> GetAvaliacoesByUsuarioIdAsync(int id)
         {
              return await _appDbContext.Avaliacoes.Where(a => a.UsuarioId == id).ToListAsync();
+        }
+
+        public void RemoveAvaliacao(Avaliacao avaliacao)
+        {
+            _appDbContext.Avaliacoes.Remove(avaliacao);
         }
 
         public void RemoveAvaliacoes(List<Avaliacao> avaliacoes)

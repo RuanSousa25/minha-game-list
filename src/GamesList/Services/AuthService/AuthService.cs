@@ -17,7 +17,7 @@ namespace GamesList.Services.AuthService
         private readonly IConfiguration _config = config;
 
 
-        public async Task<ServiceResultDto<string>> Register(RegisterRequest request)
+        public async Task<ServiceResultDto<string>> RegisterAsync(RegisterRequest request)
         {
             if (_unitOfWork.AuthRepository.CheckIfUsuarioExists(request.Login))
             {
@@ -34,7 +34,7 @@ namespace GamesList.Services.AuthService
             return Ok("Usuario Cadastrado");
         }
 
-        public async Task<ServiceResultDto<string>> Login(LoginRequest request)
+        public async Task<ServiceResultDto<string>> LoginAsync(LoginRequest request)
         {
 
             var user = await _unitOfWork.AuthRepository.GetUsuarioByLoginAsync(request.Login);

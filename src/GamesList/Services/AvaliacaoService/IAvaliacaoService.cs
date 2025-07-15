@@ -6,11 +6,11 @@ namespace GamesList.Services.AvaliacaoService
 {
     public interface IAvaliacaoService
     {
-        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoById();
-        public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id);
-        public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id);
-        public Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request);
-        public Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoId(int id);
-        public Task<ServiceResultDto<string>> RemoveAvaliacaoById(int id, int userId, bool isAdmin);
+        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync();
+        public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoIdAsync(int id);
+        public Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioIdAsync(int id);
+        public Task<ServiceResultDto<string>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request);
+        public Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoIdAsync(int id);
+        public Task<ServiceResultDto<string>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin);
     }
 }

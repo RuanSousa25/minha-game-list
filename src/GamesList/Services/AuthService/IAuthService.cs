@@ -5,8 +5,8 @@ namespace GamesList.Services.AuthService
 {
     public interface IAuthService
     {
-        public Task<ServiceResultDto<string>> Register(RegisterRequest request);
-        public Task<ServiceResultDto<string>> Login(LoginRequest request);
+        public Task<ServiceResultDto<string>> RegisterAsync(RegisterRequest request);
+        public Task<ServiceResultDto<string>> LoginAsync(LoginRequest request);
 
     }
 }

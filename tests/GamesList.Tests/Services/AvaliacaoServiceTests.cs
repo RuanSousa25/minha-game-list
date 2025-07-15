@@ -44,7 +44,7 @@ namespace GamesList.Tests.Services
             _mockAvaliacaoRepo.Setup(a => a.GetAvaliacaoByIdAsync(avaliacao.Id)).ReturnsAsync(avaliacao);
 
 
-            var result = await _service.RemoveAvaliacaoById(avaliacao.Id, userId, false);
+            var result = await _service.RemoveAvaliacaoByIdAsync(avaliacao.Id, userId, false);
 
             Assert.False(result.Success);
             Assert.Equal(403, result.StatusCode);
@@ -81,7 +81,7 @@ namespace GamesList.Tests.Services
 
             _mockUow.Setup(u => u.CommitChangesAsync()).Returns(Task.CompletedTask);
 
-            var result = await _service.SaveAvaliacao(userId, request);
+            var result = await _service.SaveAvaliacaoAsync(userId, request);
 
             Assert.True(result.Success);
             _mockAvaliacaoRepo

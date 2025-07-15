@@ -2,7 +2,7 @@ using System.Text;
 using GamesList.Databases;
 using GamesList.Repositories.AuthRepository;
 using GamesList.Repositories.AvaliacaoRepository;
-using GamesList.Repositories.GenerosRepository;
+using GamesList.Repositories.GeneroRepository;
 using GamesList.Repositories.ImagensRepository;
 using GamesList.Repositories.ImagensSugestaoRepository;
 using GamesList.Repositories.JogoRepository;
@@ -11,6 +11,7 @@ using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.AuthService;
 using GamesList.Services.AvaliacaoService;
 using GamesList.Services.BlobService;
+using GamesList.Services.GeneroService;
 using GamesList.Services.ImagensService;
 using GamesList.Services.ImagensSugestaoService;
 using GamesList.Services.JogoService;
@@ -45,7 +46,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
-builder.Services.AddScoped<IGenerosRepository, GenerosRepository>();
+builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
 builder.Services.AddScoped<IImagensRepository, ImagensRepository>();
 builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 builder.Services.AddScoped<ISugerirJogoRepository, SugerirJogoRepository>();
@@ -54,9 +55,12 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJogoService, JogoService>();
+builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IImagensService, ImagensServices>();
 builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>(); 
+builder.Services.AddScoped(provider => new Lazy<IAvaliacaoService>(() =>
+    provider.GetRequiredService<IAvaliacaoService>()));
 builder.Services.AddScoped<ISugerirJogoService, SugerirJogoService>();
 builder.Services.AddScoped<IImagensSugestaoService, ImagensSugestaoService>();
 

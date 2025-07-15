@@ -1,6 +1,6 @@
 using GamesList.Repositories.AuthRepository;
 using GamesList.Repositories.AvaliacaoRepository;
-using GamesList.Repositories.GenerosRepository;
+using GamesList.Repositories.GeneroRepository;
 using GamesList.Repositories.ImagensRepository;
 using GamesList.Repositories.ImagensSugestaoRepository;
 using GamesList.Repositories.JogoRepository;
@@ -12,7 +12,7 @@ namespace GamesList.Repositories.UnitOfWork
     {
         IAuthRepository AuthRepository { get; }
         IJogoRepository JogoRepository { get; }
-        IGenerosRepository GenerosRepository {get; }
+        IGeneroRepository GeneroRepository {get; }
         IImagensRepository ImagensRepository { get; }
         IAvaliacaoRepository AvaliacaoRepository { get; }
         IImagensSugestaoRepository ImagensSugestaoRepository { get; }

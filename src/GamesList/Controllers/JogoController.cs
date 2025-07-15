@@ -17,7 +17,7 @@ namespace GamesList.Controllers
         [HttpGet()]
         public async Task<IActionResult> ListAllJogos()
         {
-            var result = await _jogoService.GetJogosList();
+            var result = await _jogoService.ListJogosAsync();
             return FromResult(result);
         }
         
@@ -25,7 +25,7 @@ namespace GamesList.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteJogo([FromRoute] int id)
         {
-            var result = await _jogoService.RemoveJogo(id);
+            var result = await _jogoService.RemoveJogoAsync(id);
             return FromResult(result);
         }
     }

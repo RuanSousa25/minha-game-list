@@ -20,7 +20,7 @@ namespace GamesList.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ListSugestaoJogo()
         {
-            var result = await _sugerirJogoService.ListSugerirJogo();
+            var result = await _sugerirJogoService.ListSugerirJogoAsync();
             return FromResult(result);
         }
 
@@ -44,7 +44,7 @@ namespace GamesList.Controllers
             if (imagem == null) return BadRequest("Não há imagem para a sugestão.");
             if (GetUserId() is not int userId) return Unauthorized();
 
-            var result = await _sugerirJogoService.SaveSugestaoJogoComImagem(request, imagem, userId);
+            var result = await _sugerirJogoService.SaveSugestaoJogoComImagemAsync(request, imagem, userId);
             return FromResult(result);
         }
 
@@ -52,14 +52,14 @@ namespace GamesList.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AprovarJogo([FromRoute] int id)
         {
-            var result = await _sugerirJogoService.AprovarJogo(id);
+            var result = await _sugerirJogoService.AprovarJogoAsync(id);
             return FromResult(result);
         }
         [HttpPost("reprovar/{id}")]
         [Authorize]
         public async Task<IActionResult> ReprovarJogo([FromRoute] int id)
         {
-            var sugestaoResult = await _sugerirJogoService.FindSugestaoJogo(id);
+            var sugestaoResult = await _sugerirJogoService.FindSugestaoJogoAsync(id);
             if (sugestaoResult == null) return NotFound("Sugestão de jogo não encontrada");
             if (!sugestaoResult.Success) return FromResult(sugestaoResult);
 
@@ -67,7 +67,7 @@ namespace GamesList.Controllers
             var userId = ClaimsHelper.GetUserId(User);
             var userRole = ClaimsHelper.GetUserRole(User);
             if (data.UsuarioId != userId && userRole != "admin") return Forbid();
-            var result = await _sugerirJogoService.RemoverSugestaoJogo(id);
+            var result = await _sugerirJogoService.RemoverSugestaoJogoAsync(id);
             return FromResult(result);
         }
         

@@ -16,13 +16,13 @@ namespace GamesList.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var result = await _authService.Register(request);
+            var result = await _authService.RegisterAsync(request);
             return FromResult(result);
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var result = await _authService.Login(request);
+            var result = await _authService.LoginAsync(request);
             return FromResult(result);
         }
     }

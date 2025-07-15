@@ -1,8 +1,8 @@
 using GamesList.Models;
 
-namespace GamesList.Repositories.GenerosRepository
+namespace GamesList.Repositories.GeneroRepository
 {
-    public interface IGenerosRepository
+    public interface IGeneroRepository
     {
         public Task<List<Genero>> GetGenerosAsync();
         public Task<List<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids);

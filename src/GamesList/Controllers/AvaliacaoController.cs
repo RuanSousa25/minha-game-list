@@ -17,13 +17,13 @@ namespace GamesList.Controllers
         [HttpGet("jogo/{id}")]
         public async Task<IActionResult> GetAvaliacoesByJogoId([FromRoute] int id)
         {
-            var result = await _avaliacaoService.GetAvaliacoesByJogoId(id);
+            var result = await _avaliacaoService.GetAvaliacoesByJogoIdAsync(id);
             return FromResult(result);
         }
         [HttpGet("usuario/{id}")]
         public async Task<IActionResult> GetAvaliacoesByUsuarioId([FromRoute] int id)
         {
-            var result = await _avaliacaoService.GetAvaliacoesByUsuarioId(id);
+            var result = await _avaliacaoService.GetAvaliacoesByUsuarioIdAsync(id);
             return FromResult(result);
         }
         [HttpPost("jogo")]
@@ -32,7 +32,7 @@ namespace GamesList.Controllers
         {
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdStr, out var userId)) return Unauthorized();
-            var result = await _avaliacaoService.SaveAvaliacao(userId, request);
+            var result = await _avaliacaoService.SaveAvaliacaoAsync(userId, request);
             return FromResult(result);
         }
         [HttpPost("{id}")]
@@ -42,7 +42,7 @@ namespace GamesList.Controllers
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userIdStr == null || !int.TryParse(userIdStr, out var userId)) return Unauthorized();
             var isAdmin = ClaimsHelper.GetUserRole(User) == "admin";
-            var result = await _avaliacaoService.RemoveAvaliacaoById(id, userId, isAdmin);
+            var result = await _avaliacaoService.RemoveAvaliacaoByIdAsync(id, userId, isAdmin);
             return FromResult(result);
         }
     }

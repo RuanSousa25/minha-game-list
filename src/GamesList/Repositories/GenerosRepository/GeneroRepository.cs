@@ -2,9 +2,9 @@ using GamesList.Databases;
 using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace GamesList.Repositories.GenerosRepository
+namespace GamesList.Repositories.GeneroRepository
 {
-    public class GenerosRepository(AppDbContext appDbContext) : IGenerosRepository
+    public class GeneroRepository(AppDbContext appDbContext) : IGeneroRepository
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 

@@ -12,7 +12,7 @@ namespace GamesList.Services.ImagensSugestaoService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly ILogger<ImagensSugestaoService> _logger = logger;
 
-        public async Task<ServiceResultDto<string>> SaveImagem(int sugestaoJogoId, string url)
+        public async Task<ServiceResultDto<string>> SaveImagemAsync(int sugestaoJogoId, string url)
         {
             var imagem = new ImagensSugestao { SugerirJogoId = sugestaoJogoId, Url = url, TipoId = 1 };
             await _unitOfWork.ImagensSugestaoRepository.AddImagemAsync(imagem);

@@ -1,7 +1,7 @@
 using GamesList.Databases;
 using GamesList.Repositories.AuthRepository;
 using GamesList.Repositories.AvaliacaoRepository;
-using GamesList.Repositories.GenerosRepository;
+using GamesList.Repositories.GeneroRepository;
 using GamesList.Repositories.ImagensRepository;
 using GamesList.Repositories.ImagensSugestaoRepository;
 using GamesList.Repositories.JogoRepository;
@@ -13,7 +13,7 @@ namespace GamesList.Repositories.UnitOfWork
         AppDbContext appDbContext,
         IAuthRepository authRepo,
         IJogoRepository jogoRepo,
-        IGenerosRepository genRepo,
+        IGeneroRepository genRepo,
         IImagensRepository imRepo,
         IAvaliacaoRepository avRepo,
         ISugerirJogoRepository SugRepo,
@@ -24,7 +24,7 @@ namespace GamesList.Repositories.UnitOfWork
 
         public IAuthRepository AuthRepository { get; } = authRepo;
         public IJogoRepository JogoRepository { get; } = jogoRepo;
-        public IGenerosRepository GenerosRepository { get; } = genRepo;
+        public IGeneroRepository GeneroRepository { get; } = genRepo;
         public IImagensRepository ImagensRepository { get; } = imRepo;
         public IAvaliacaoRepository AvaliacaoRepository { get; } = avRepo;
         public IImagensSugestaoRepository ImagensSugestaoRepository { get; } = imSRepo;

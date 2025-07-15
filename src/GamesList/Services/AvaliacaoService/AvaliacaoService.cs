@@ -14,23 +14,23 @@ namespace GamesList.Services.AvaliacaoService
         private readonly IJogoService _jogoService = jogoService;
 
 
-        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoById()
+        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync()
         {
             throw new NotImplementedException();
         }
-        public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoId(int id)
+        public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByJogoIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
             return Ok(avaliacoes);
         }
 
-        public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioId(int id)
+        public async Task<ServiceResultDto<List<Avaliacao>>> GetAvaliacoesByUsuarioIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdAsync(id);
             return Ok(avaliacoes);
         }
 
-        public async Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoId(int id)
+        public async Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
             if (avaliacoes == null || avaliacoes.Count == 0)
@@ -42,7 +42,7 @@ namespace GamesList.Services.AvaliacaoService
             _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
             return Ok("Remoção de avaliações realizada com sucesso.");
         }
-        public async Task<ServiceResultDto<string>> RemoveAvaliacaoById(int id, int userId, bool isAdmin)
+        public async Task<ServiceResultDto<string>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin)
         {
             var avaliacao = await _unitOfWork.AvaliacaoRepository.GetAvaliacaoByIdAsync(id);
             if (avaliacao == null)
@@ -62,7 +62,7 @@ namespace GamesList.Services.AvaliacaoService
             return Ok("Avaliação removida com sucesso.");
         }
 
-        public async Task<ServiceResultDto<string>> SaveAvaliacao(int userId, AvaliacaoRequest request)
+        public async Task<ServiceResultDto<string>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request)
         {
             var resultDto = await _jogoService.CheckIfJogoExistsAsync(request.JogoId);
             if (!resultDto.Success) return new ServiceResultDto<string> { StatusCode = resultDto.StatusCode, Message = resultDto.Message };

@@ -60,7 +60,7 @@ namespace GamesList.Services.JogoService
             var jogo = await _unitOfWork.JogoRepository.GetJogoAsync(id);
             if (jogo == null)
             {
-                return NotFound<JogoDTO>("O jogo informado não foi encontrado.");
+                return NotFound<JogoDTO>("Jogo não encontrado");
             }
 
             return Ok(new JogoDTO(jogo));

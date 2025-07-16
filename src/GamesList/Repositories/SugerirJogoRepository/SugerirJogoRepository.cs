@@ -30,7 +30,7 @@ namespace GamesList.Repositories.SugerirJogoRepository
 
         public async Task<List<SugerirJogo>> ListSugerirJogosAsync()
         {
-            return await _appDbContext.SugerirJogo.ToListAsync();
+            return await _appDbContext.SugerirJogo.Include(s => s.Generos).Include(s => s.Imagens).ToListAsync();
         }
 
         public void RemoveSugestao(SugerirJogo sugerirJogo)

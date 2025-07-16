@@ -2,23 +2,12 @@ using GamesList.Models;
 
 namespace GamesList.DTOs
 {
-    public class JogoDTO
+    public class JogoDTO(Jogo jogo)
     {
-        public int Id { get; set; }
-        public string Nome { get; set; }
-        public int Nota { get; set; }
-        public ICollection<string> Generos { get; set; } = [];
-        public ICollection<string> Imagens { get; set; } = [];
-
-        public JogoDTO(Jogo jogo)
-        {
-            Id = jogo.Id;
-            Nome = jogo.Nome;
-            Nota = jogo.Avaliacoes.Any() ? (int)Math.Round(jogo.Avaliacoes.Average(a => a.Nota)) : 0;
-            Generos = [.. jogo.Generos.Select(g => g.Nome)];
-            Imagens = [.. jogo.Imagens.Select(i => i.Url)];
-            
-        }
-
+        public int Id { get; set; } = jogo.Id;
+        public string Nome { get; set; } = jogo.Nome;
+        public int Nota { get; set; } = jogo.Avaliacoes.Count > 0 ? (int)Math.Round(jogo.Avaliacoes.Average(a => a.Nota)) : 0;
+        public ICollection<string> Generos { get; set; } = [.. jogo.Generos.Select(g => g.Nome)];
+        public ICollection<string> Imagens { get; set; } = [.. jogo.Imagens.Select(i => i.Url)];
     }
 }

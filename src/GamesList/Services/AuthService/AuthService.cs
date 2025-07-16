@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using GamesList.DTOs;
 using GamesList.DTOs.Requests;
 using GamesList.Models;
@@ -10,7 +11,7 @@ using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.AuthService
 {
-    public class AuthService(IUnitOfWork uow, IConfiguration config, ILogger<AuthService> logger) : IAuthService
+    public partial class AuthService(IUnitOfWork uow, IConfiguration config, ILogger<AuthService> logger) : IAuthService
     {
         private readonly ILogger<AuthService> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = uow;
@@ -19,11 +20,22 @@ namespace GamesList.Services.AuthService
 
         public async Task<ServiceResultDto<string>> RegisterAsync(RegisterRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Senha))
+            {
+                _logger.LogWarning("Login ou senha vazios");
+                return BadRequest<string>("Credenciais inválidas ou ausentes");
+            }
+            if (!SenhaValidaRegex().IsMatch(request.Senha))
+            {
+                _logger.LogWarning("Login ou senha vazios");
+                return ValidationError<string>("A senha deve conter, pelo menos, 8 caraceteres, com letras e números");
+            }
             if (_unitOfWork.AuthRepository.CheckIfUsuarioExists(request.Login))
             {
                 _logger.LogWarning("Usuário {usuario} já existe no banco de dados.", request.Login);
                 return Conflict<string>("Usuário já existe");
             }
+
             var hash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
             var user = new Usuario { Login = request.Login, SenhaHash = hash };
@@ -31,7 +43,7 @@ namespace GamesList.Services.AuthService
             await _unitOfWork.AuthRepository.AddUsuarioAsync(user);
             await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Usuário cadastrado.");
-            return Ok("Usuario Cadastrado");
+            return Created("Usuario Cadastrado");
         }
 
         public async Task<ServiceResultDto<string>> LoginAsync(LoginRequest request)
@@ -40,8 +52,8 @@ namespace GamesList.Services.AuthService
             var user = await _unitOfWork.AuthRepository.GetUsuarioByLoginAsync(request.Login);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Senha, user.SenhaHash))
             {
-                 _logger.LogWarning("Credenciais incorretas.");
-                return ValidationError<string>("Credenciais Incorretas.");
+                _logger.LogWarning("Credenciais incorretas.");
+                return Unauthorized<string>("Credenciais Incorretas.");
             }
 
 
@@ -65,5 +77,8 @@ namespace GamesList.Services.AuthService
             _logger.LogInformation("Token criado.");
             return Ok(jwt);
         }
+
+        [GeneratedRegex("^(?=.*[A-Za-z])(?=.*\\d).{8,}$")]
+        private static partial Regex SenhaValidaRegex();
     }
 }

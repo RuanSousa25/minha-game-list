@@ -32,7 +32,7 @@ namespace GamesList.Controllers
             if (!int.TryParse(userIdStr, out var userId)) return Unauthorized();
             return FromResult(await _avaliacaoService.SaveAvaliacaoAsync(userId, request));
         }
-        [HttpPost("{id}")]
+        [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> RemoveAvaliacaoAsync([FromRoute] int id)
         {

@@ -17,16 +17,14 @@ namespace GamesList.Controllers
         [HttpGet()]
         public async Task<IActionResult> ListAllJogos()
         {
-            var result = await _jogoService.ListJogosAsync();
-            return FromResult(result);
+            return FromResult( await _jogoService.ListJogosAsync());
         }
         
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteJogo([FromRoute] int id)
         {
-            var result = await _jogoService.RemoveJogoAsync(id);
-            return FromResult(result);
+            return FromResult( await _jogoService.RemoveJogoAsync(id));
         }
     }
 }

@@ -1,6 +1,7 @@
 using GamesList.Models;
 using GamesList.Services.GeneroService;
 using Microsoft.AspNetCore.Mvc;
+using Sprache;
 
 namespace GamesList.Controllers
 {
@@ -11,19 +12,18 @@ namespace GamesList.Controllers
         private readonly IGeneroService _generoService = generoService;
 
 
-        [HttpGet("list")]
-        public async Task<IActionResult> ListGenerosAsync()
-        {
-            var result = await _generoService.ListGenerosAsync();
-            if (!result.Success) return StatusCode(result.StatusCode, result.Message);
-            return Ok(result.Data);
-        }
+
         [HttpGet()]
-        public async Task<IActionResult> ListGenerosByIdsAsync([FromBody] List<int> ids)
+        public async Task<IActionResult> ListGenerosByIdsAsync([FromQuery] List<int>? id)
         {
-            var result = await _generoService.ListGenerosByIdsAsync(ids);
-            if (!result.Success) return StatusCode(result.StatusCode, result.Message);
-            return Ok(result.Data);
+            if (id is { Count: > 0 })
+            {
+                return FromResult( await _generoService.ListGenerosByIdsAsync(id));
+            }
+            else
+            {
+                return FromResult( await _generoService.ListGenerosAsync());
+            }            
         }
     }
 

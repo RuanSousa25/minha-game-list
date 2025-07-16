@@ -15,35 +15,31 @@ namespace GamesList.Controllers
 
 
         [HttpGet("jogo/{id}")]
-        public async Task<IActionResult> GetAvaliacoesByJogoId([FromRoute] int id)
+        public async Task<IActionResult> GetAvaliacoesByJogoIdAsync([FromRoute] int id)
         {
-            var result = await _avaliacaoService.GetAvaliacoesByJogoIdAsync(id);
-            return FromResult(result);
+            return FromResult(await _avaliacaoService.GetAvaliacoesByJogoIdAsync(id));
         }
         [HttpGet("usuario/{id}")]
-        public async Task<IActionResult> GetAvaliacoesByUsuarioId([FromRoute] int id)
+        public async Task<IActionResult> GetAvaliacoesByUsuarioIdAsync([FromRoute] int id)
         {
-            var result = await _avaliacaoService.GetAvaliacoesByUsuarioIdAsync(id);
-            return FromResult(result);
+            return FromResult(await _avaliacaoService.GetAvaliacoesByUsuarioIdAsync(id));
         }
         [HttpPost("jogo")]
         [Authorize]
-        public async Task<IActionResult> PostAvaliacao([FromBody] AvaliacaoRequest request)
+        public async Task<IActionResult> PostAvaliacaoAsync([FromBody] AvaliacaoRequest request)
         {
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(userIdStr, out var userId)) return Unauthorized();
-            var result = await _avaliacaoService.SaveAvaliacaoAsync(userId, request);
-            return FromResult(result);
+            return FromResult(await _avaliacaoService.SaveAvaliacaoAsync(userId, request));
         }
         [HttpPost("{id}")]
         [Authorize]
-        public async Task<IActionResult> RemoveAvaliacao([FromRoute] int id)
+        public async Task<IActionResult> RemoveAvaliacaoAsync([FromRoute] int id)
         {
             var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userIdStr == null || !int.TryParse(userIdStr, out var userId)) return Unauthorized();
             var isAdmin = ClaimsHelper.GetUserRole(User) == "admin";
-            var result = await _avaliacaoService.RemoveAvaliacaoByIdAsync(id, userId, isAdmin);
-            return FromResult(result);
+            return FromResult( await _avaliacaoService.RemoveAvaliacaoByIdAsync(id, userId, isAdmin));
         }
     }
 }

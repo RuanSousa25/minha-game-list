@@ -20,6 +20,15 @@ namespace GamesList.Repositories.JogoRepository
             return await _appDbContext.Jogos.AnyAsync(j => j.Id == id);
         }
 
+        public async Task<Jogo?> GetJogoAsync(int id)
+        {
+            return await _appDbContext.Jogos
+            .Include(j => j.Generos)
+            .Include(j => j.Avaliacoes)
+            .Include(j => j.Imagens)
+            .FirstOrDefaultAsync(j => j.Id == id);
+        }
+
         public async Task<Jogo?> GetJogoComRelacionamentoByIdAsync(int id)
         {
             var jogo =

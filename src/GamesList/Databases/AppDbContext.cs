@@ -33,7 +33,8 @@ namespace GamesList.Databases
                     j => j.HasOne<Genero>().WithMany().HasForeignKey("GeneroId"),
                     g => g.HasOne<SugerirJogo>().WithMany().HasForeignKey("SugerirJogoId")
                 );
-            
+
         }
+
     }
 }

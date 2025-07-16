@@ -10,5 +10,6 @@ namespace GamesList.Repositories.JogoRepository
         public Task<bool> RemoveJogoByIdAsync(int id);
         public Task<bool> CheckIfJogoExistsAsync(int id);
         public Task AddJogoAsync(Jogo jogo);
+        public Task<Jogo?> GetJogoAsync(int id);
     }
 }

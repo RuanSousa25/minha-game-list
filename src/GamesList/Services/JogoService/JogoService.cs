@@ -7,7 +7,10 @@ using static GamesList.DTOs.Helpers.Results;
 
 namespace GamesList.Services.JogoService
 {
-    public class JogoService(IUnitOfWork uow, IImagensService imagensService, Lazy<IAvaliacaoService> avaliacaoService, ILogger<JogoService> logger) : IJogoService
+    public class JogoService(IUnitOfWork uow,
+    IImagensService imagensService,
+    Lazy<IAvaliacaoService> avaliacaoService,
+    ILogger<JogoService> logger) : IJogoService
     {
         private readonly ILogger<JogoService> _logger = logger;
         private readonly IUnitOfWork _unitOfWork = uow;
@@ -51,5 +54,16 @@ namespace GamesList.Services.JogoService
             var result = await _unitOfWork.JogoRepository.CheckIfJogoExistsAsync(id);
             return Ok(result);
         }
+
+        public async Task<ServiceResultDto<JogoDTO>> GetJogoAsync(int id)
+        {
+            var jogo = await _unitOfWork.JogoRepository.GetJogoAsync(id);
+            if (jogo == null)
+            {
+                return NotFound<JogoDTO>("O jogo informado não foi encontrado.");
+            }
+
+            return Ok(new JogoDTO(jogo));
+        }   
     }
 }

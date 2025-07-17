@@ -282,8 +282,17 @@ Usuário sugere um novo jogo para aprovação.
 
 | Campo        | Tipo          | Descrição                    |
 | ------------ | ------------- | ---------------------------- |
-| `dados`      | `text` (JSON) | Informações do jogo sugerido |
+| `sugestao`   | `text` (JSON) | Informações do jogo sugerido |
 | `imagemCapa` | `file`        | Arquivo da imagem de capa    |
+
+_Exemplo para campo sugestao_
+
+```json
+{
+  "nome": "Your Turn To Die -Death Game By Majority-",
+  "generos": [9, 10, 22, 25, 2]
+}
+```
 
 **Resposta (201 Created):**
 

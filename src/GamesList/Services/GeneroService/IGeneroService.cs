@@ -1,4 +1,4 @@
-using GamesList.DTOs;
+using GamesList.Dtos;
 using GamesList.Models;
 
 namespace GamesList.Services.GeneroService

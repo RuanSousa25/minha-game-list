@@ -1,8 +1,8 @@
 using GamesList.Models;
 
-namespace GamesList.DTOs
+namespace GamesList.Dtos
 {
-    public class SugerirJogoDTO(SugerirJogo sugestao)
+    public class SugerirJogoDto(SugerirJogo sugestao)
     {
         public int Id { get; set; } = sugestao.Id;
         public int UsuarioId { get; set; } = sugestao.UsuarioId;

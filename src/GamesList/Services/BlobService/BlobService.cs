@@ -1,7 +1,8 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using GamesList.DTOs;
-using static GamesList.DTOs.Helpers.Results;
+using GamesList.Dtos;
+using GamesList.Dtos.Responses;
+using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.BlobService
 {
@@ -19,20 +20,20 @@ namespace GamesList.Services.BlobService
             _logger = logger;
         }
 
-        public async Task<ServiceResultDto<string>> DeleteFileAsync(string url)
+        public async Task<ServiceResultDto<MessageResponseDto>> DeleteFileAsync(string url)
         {
             var filename = Path.GetFileName(new Uri(url).LocalPath.TrimStart('/'));
             var blob = _containerClient.GetBlobClient(filename);
 
             var response = await blob.DeleteIfExistsAsync();
             if (response)
-                return Ok("Imagem apagada com sucesso");
+                return Ok(new MessageResponseDto("Imagem apagada com sucesso"));
 
             _logger.LogError("Não foi possível apagar o blob {url}", url);
-            return ServerError<string>("Não foi possível apagar o blob");
+            return ServerError<MessageResponseDto>("Não foi possível apagar o blob");
         }
 
-        public async Task<ServiceResultDto<string>> UploadFileAsync(Stream fileStream, string fileName, string contentType)
+        public async Task<ServiceResultDto<UploadBlobResponseDto>> UploadFileAsync(Stream fileStream, string fileName, string contentType)
         {
 
             var headers = new BlobHttpHeaders
@@ -46,9 +47,10 @@ namespace GamesList.Services.BlobService
             if (string.IsNullOrWhiteSpace(url))
             {
                 _logger.LogError("Ocorreu um erro ao fazer upload da imagem.");
-                return ServerError<string>("Ocorreu um erro ao fazer upload da imagem");
+                return ServerError<UploadBlobResponseDto>("Ocorreu um erro ao fazer upload da imagem");
             }
-            return Ok(url);
+            return Ok(new UploadBlobResponseDto(url));
         }
+
     }
 }

@@ -1,12 +1,13 @@
-using GamesList.DTOs;
-using GamesList.DTOs.Requests;
+using GamesList.Dtos;
+using GamesList.Dtos.Requests;
+using GamesList.Dtos.Responses;
 
 namespace GamesList.Services.AuthService
 {
     public interface IAuthService
     {
-        public Task<ServiceResultDto<string>> RegisterAsync(RegisterRequest request);
-        public Task<ServiceResultDto<string>> LoginAsync(LoginRequest request);
+        public Task<ServiceResultDto<MessageResponseDto>> RegisterAsync(RegisterRequest request);
+        public Task<ServiceResultDto<LoginResponseDto>> LoginAsync(LoginRequest request);
 
     }
 }

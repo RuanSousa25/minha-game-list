@@ -47,7 +47,9 @@ Registra login e senha do usuário no banco para acesso futuro.
 **Resposta (201 Created):**
 
 ```json
-"Usuario Cadastrado"
+{
+  "message": "Usuario Cadastrado"
+}
 ```
 
 **Erros possíveis:**
@@ -82,7 +84,9 @@ Autentica o usuário e retorna um token JWT.
 **Resposta (200 OK):**
 
 ```json
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoibG9naW50ZXN0ZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiOSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NTI2NzYxMzF9.AXHNwoIn0ZKJCMA9GVBNK5dV6U-ph7OrIdOwFGfDP-I"
+{
+  "message": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoibG9naW50ZXN0ZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiOSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NTI2NzYxMzF9.AXHNwoIn0ZKJCMA9GVBNK5dV6U-ph7OrIdOwFGfDP-I"
+}
 ```
 
 **Erros possíveis:**
@@ -179,7 +183,9 @@ Remove um jogo do banco de dados.
 **Resposta (200 OK):**
 
 ```json
-"Exclusão realizada com sucesso"
+{
+  "message": "Exclusão realizada com sucesso"
+}
 ```
 
 **Erros possíveis:**
@@ -282,7 +288,9 @@ Usuário sugere um novo jogo para aprovação.
 **Resposta (201 Created):**
 
 ```json
-"Sugestão inserida com sucesso"
+{
+  "message": "Sugestão inserida com sucesso"
+}
 ```
 
 **Erros possíveis:**
@@ -395,7 +403,9 @@ Admin reprova uma sugestão de jogo.
 **Resposta (200 OK):**
 
 ```json
-"Sugestão removida com sucesso"
+{
+  "message": "Sugestão removida com sucesso"
+}
 ```
 
 **Erros possíveis:**
@@ -530,7 +540,9 @@ Remove uma avaliação do banco de dados. Somente o autor ou admin pode excluir.
 **Resposta (200 OK):**
 
 ```json
-"Avaliação removida com sucesso"
+{
+  "message": "Avaliação removida com sucesso"
+}
 ```
 
 **Erros possíveis:**
@@ -541,7 +553,13 @@ Remove uma avaliação do banco de dados. Somente o autor ou admin pode excluir.
 
 ---
 
-### ⚠️ Observação
+### ⚠️ Observações
+
+Todos os retornos com mensagem de erro seguem a estrutura a seguir:
+
+```json
+"message": "erroMessageContent"
+```
 
 Para rodar o projeto localmente, é necessário configurar os seguintes parâmetros no arquivo de variáveis de ambiente (`.env`) ou no `appsettings.json`:
 

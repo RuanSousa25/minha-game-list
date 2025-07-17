@@ -1,8 +1,8 @@
-using GamesList.DTOs;
+using GamesList.Dtos;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Http.HttpResults;
-using static GamesList.DTOs.Helpers.Results;
+using static GamesList.Dtos.Helpers.Results;
 namespace GamesList.Services.GeneroService
 {
     public class GeneroService(IUnitOfWork uow, ILogger<GeneroService> logger) : IGeneroService

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace GamesList.DTOs.Helpers
+namespace GamesList.Dtos.Helpers
 {
     public class ClaimsHelper
     {

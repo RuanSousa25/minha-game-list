@@ -1,13 +1,14 @@
 using GamesList.Databases;
-using GamesList.DTOs;
-using GamesList.DTOs.Requests;
+using GamesList.Dtos;
+using GamesList.Dtos.Requests;
+using GamesList.Dtos.Responses;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.BlobService;
 using GamesList.Services.ImagensService;
 using GamesList.Services.ImagensSugestaoService;
 using GamesList.Services.JogoService;
-using static GamesList.DTOs.Helpers.Results;
+using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.SugerirJogoService
 {
@@ -34,29 +35,35 @@ namespace GamesList.Services.SugerirJogoService
             _logger.LogInformation("Sugestão de jogo {nome} inserida com sucesso. Id da sugestão: {id}", sugestao.Nome, sugestao.Id);
             return Ok(sugestao.Id);
         }
-        public async Task<ServiceResultDto<string>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagem, int userId)
+        public async Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagem, int userId)
         {
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
             var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
-            if (!blobResult.Success) return blobResult;
+            if (!blobResult.Success)
+                return new ServiceResultDto<MessageResponseDto>()
+                {
+                    StatusCode = blobResult.StatusCode,
+                    Message = blobResult.Message,
+                    Success = blobResult.Success
+                };
 
             var sugestaoResult = await SaveSugestaoJogoAsync(request, userId);
-            if (!sugestaoResult.Success) return ServerError<string>("Não foi possível inserir a sugestão.");
+            if (!sugestaoResult.Success) return ServerError<MessageResponseDto>("Não foi possível inserir a sugestão.");
 
-            var sugestaoImagemResult = await _imagensSugestaoService.SaveImagemAsync(sugestaoResult.Data, blobResult.Data!);
+            var sugestaoImagemResult = await _imagensSugestaoService.SaveImagemAsync(sugestaoResult.Data, blobResult.Data.Url!);
             if (!sugestaoImagemResult.Success) return sugestaoImagemResult;
 
-            return Created("Sugestão inserida com sucesso");
+            return Created(new MessageResponseDto("Sugestão inserida com sucesso"));
         }
 
-        public async Task<ServiceResultDto<JogoDTO>> AprovarJogoAsync(int id)
+        public async Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id)
         {
             var sugestao =
             await _unitOfWork.SugerirJogoRepository.GetSugerirJogoComRelacoesByIdAsync(id);
             if (sugestao == null)
             {
                 _logger.LogWarning("Não foi encontrada a sugestão de {id}", id);
-                return NotFound<JogoDTO>("Sugestão não encontrada");
+                return NotFound<JogoDto>("Sugestão não encontrada");
             }
             sugestao.Aprovado = true;
 
@@ -70,27 +77,27 @@ namespace GamesList.Services.SugerirJogoService
                 await _imagensService.AddImagemAsync(new Imagem { Url = imagemSugestao.Url, JogoId = jogo.Id, TipoId = imagemSugestao.TipoId });
             }
              await _unitOfWork.CommitChangesAsync();
-            return Ok(new JogoDTO(jogo));
+            return Ok(new JogoDto(jogo));
         }
 
-        public async Task<ServiceResultDto<List<SugerirJogoDTO>>> ListSugerirJogoAsync()
+        public async Task<ServiceResultDto<List<SugerirJogoDto>>> ListSugerirJogoAsync()
         {
             var sugestoes = await _unitOfWork.SugerirJogoRepository.ListSugerirJogosAsync();
-            return Ok(sugestoes.Select(s => new SugerirJogoDTO(s)).ToList());
+            return Ok(sugestoes.Select(s => new SugerirJogoDto(s)).ToList());
         }
-        public async Task<ServiceResultDto<string>> RemoverSugestaoJogoAsync(int id)
+        public async Task<ServiceResultDto<MessageResponseDto>> RemoverSugestaoJogoAsync(int id)
         {
             var sugestao = await _unitOfWork.SugerirJogoRepository.GetSugerirJogoComRelacoesByIdAsync(id);
             if (sugestao == null)
             {
                 _logger.LogWarning("Sugestão de Id {id} não encontrada.", id);
-                return NotFound<string>("Sugestão não encontrada.");
+                return NotFound<MessageResponseDto>("Sugestão não encontrada.");
             }
             _unitOfWork.SugerirJogoRepository.RemoveSugestao(sugestao);
             _imagensSugestaoService.RemoveSugestaoImagens([.. sugestao.Imagens]);
             await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Sugestão de Id {id} foi removida com sucesso.", id);
-            return Ok("Sugestão removida com sucesso");
+            return Ok(new MessageResponseDto("Sugestão removida com sucesso"));
         }
         public async Task<ServiceResultDto<SugerirJogo>> FindSugestaoJogoAsync(int id)
         {

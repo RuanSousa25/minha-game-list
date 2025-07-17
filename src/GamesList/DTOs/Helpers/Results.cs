@@ -1,4 +1,4 @@
-namespace GamesList.DTOs.Helpers
+namespace GamesList.Dtos.Helpers
 {
     public class Results
     {

@@ -1,4 +1,4 @@
-namespace GamesList.DTOs.Requests
+namespace GamesList.Dtos.Requests
 {
     public class RegisterRequest
     {

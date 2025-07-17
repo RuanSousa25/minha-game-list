@@ -1,10 +1,12 @@
-using GamesList.DTOs;
+using GamesList.Dtos;
+using GamesList.Dtos.Responses;
 
 namespace GamesList.Services.BlobService
 {
     public interface IBlobService
     {
-        public Task<ServiceResultDto<string>> UploadFileAsync(Stream filestream, string fileName, string contentType);
-        public Task<ServiceResultDto<string>> DeleteFileAsync(string url);
+        public Task<ServiceResultDto<MessageResponseDto>> DeleteFileAsync(string url);
+
+        public Task<ServiceResultDto<UploadBlobResponseDto>> UploadFileAsync(Stream filestream, string fileName, string contentType);
     }   
 }

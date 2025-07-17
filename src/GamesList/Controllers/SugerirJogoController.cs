@@ -1,6 +1,6 @@
 using System.Text.Json;
-using GamesList.DTOs.Helpers;
-using GamesList.DTOs.Requests;
+using GamesList.Dtos.Helpers;
+using GamesList.Dtos.Requests;
 using GamesList.Services.SugerirJogoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;

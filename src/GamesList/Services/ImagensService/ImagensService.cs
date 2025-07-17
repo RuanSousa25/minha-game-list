@@ -1,10 +1,11 @@
 using GamesList.Databases;
-using GamesList.DTOs;
+using GamesList.Dtos;
+using GamesList.Dtos.Responses;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.BlobService;
 using Microsoft.EntityFrameworkCore;
-using static GamesList.DTOs.Helpers.Results;
+using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.ImagensService
 {
@@ -14,13 +15,13 @@ namespace GamesList.Services.ImagensService
         private readonly IBlobService _blobService = blobService;
         private readonly IUnitOfWork _unitOfWork = uow;
 
-        public async Task<ServiceResultDto<string>> AddImagemAsync(Imagem imagem)
+        public async Task<ServiceResultDto<MessageResponseDto>> AddImagemAsync(Imagem imagem)
         {
             await _unitOfWork.ImagensRepository.AddImagemAsync(imagem);
-            return Ok("Imagem adicionada com sucesso");
+            return Ok(new MessageResponseDto("Imagem adicionada com sucesso"));
         }
 
-        public async Task<ServiceResultDto<string>> RemoveImagensByJogoIdAsync(int id)
+        public async Task<ServiceResultDto<MessageResponseDto>> RemoveImagensByJogoIdAsync(int id)
         {
             var imagens = await _unitOfWork.ImagensRepository.GetImagensByJogoId(id);
 
@@ -31,7 +32,7 @@ namespace GamesList.Services.ImagensService
             var deleteTasks = imagens.Select(async i => await _blobService.DeleteFileAsync(i.Url));
             await Task.WhenAll(deleteTasks);
             
-            return Ok("Remoção de imagens realizada realizada.");
+            return Ok(new MessageResponseDto("Remoção de imagens realizada realizada."));
 
         }
     }

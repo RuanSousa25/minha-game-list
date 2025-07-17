@@ -1,8 +1,8 @@
 using GamesList.Models;
 
-namespace GamesList.DTOs
+namespace GamesList.Dtos
 {
-    public class JogoDTO(Jogo jogo)
+    public class JogoDto(Jogo jogo)
     {
         public int Id { get; set; } = jogo.Id;
         public string Nome { get; set; } = jogo.Nome;

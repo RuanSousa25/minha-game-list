@@ -1,9 +1,10 @@
-using GamesList.DTOs;
+using GamesList.Dtos;
+using GamesList.Dtos.Responses;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.AvaliacaoService;
 using GamesList.Services.ImagensService;
-using static GamesList.DTOs.Helpers.Results;
+using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.JogoService
 {
@@ -16,18 +17,18 @@ namespace GamesList.Services.JogoService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IImagensService _imagensService = imagensService;
         private readonly Lazy<IAvaliacaoService> _avaliacaoService = avaliacaoService;
-        public async Task<ServiceResultDto<List<JogoDTO>>> ListJogosAsync()
+        public async Task<ServiceResultDto<List<JogoDto>>> ListJogosAsync()
         {
             var jogos = await _unitOfWork.JogoRepository.GetJogosAsync();
-            return Ok(jogos.Select(j => new JogoDTO(j)).ToList());
+            return Ok(jogos.Select(j => new JogoDto(j)).ToList());
         }
-        public async Task<ServiceResultDto<string>> RemoveJogoAsync(int id)
+        public async Task<ServiceResultDto<MessageResponseDto>> RemoveJogoAsync(int id)
         {
             var jogo = await _unitOfWork.JogoRepository.GetJogoComRelacionamentoByIdAsync(id);
             if (jogo == null)
             {
                 _logger.LogWarning("Jogo {id} não econtrado no banco de dados.", id);
-                return NotFound<string>("Jogo não encontrado.");
+                return NotFound<MessageResponseDto>("Jogo não encontrado.");
             }
             jogo.Generos.Clear();
             await _avaliacaoService.Value.RemoveAvaliacoesByJogoIdAsync(id);
@@ -39,10 +40,10 @@ namespace GamesList.Services.JogoService
             catch (Exception e)
             {
                 _logger.LogError("Não foi possível remover o jogo {nome}. JogoId: {id}", jogo.Nome, jogo.Id);
-                return ServerError<string>("Não foi possível realizar a exclusão. Error: " + e);
+                return ServerError<MessageResponseDto>("Não foi possível realizar a exclusão. Error: " + e);
             }
             _logger.LogInformation("Jogo {nome} foi removido com sucesso. JogoId: {id}", jogo.Nome, jogo.Id);
-            return Ok("Exclusão realizada com sucesso");
+            return Ok(new MessageResponseDto("Exclusão realizada com sucesso"));
         }
         public async Task<ServiceResultDto<Jogo>> AddJogoAsync(Jogo jogo)
         {
@@ -55,15 +56,15 @@ namespace GamesList.Services.JogoService
             return Ok(result);
         }
 
-        public async Task<ServiceResultDto<JogoDTO>> GetJogoAsync(int id)
+        public async Task<ServiceResultDto<JogoDto>> GetJogoAsync(int id)
         {
             var jogo = await _unitOfWork.JogoRepository.GetJogoAsync(id);
             if (jogo == null)
             {
-                return NotFound<JogoDTO>("Jogo não encontrado");
+                return NotFound<JogoDto>("Jogo não encontrado");
             }
 
-            return Ok(new JogoDTO(jogo));
+            return Ok(new JogoDto(jogo));
         }   
     }
 }

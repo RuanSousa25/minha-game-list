@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using GamesList.Databases;
-using GamesList.DTOs;
+using GamesList.Dtos;
 using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
 

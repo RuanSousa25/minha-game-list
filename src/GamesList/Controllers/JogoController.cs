@@ -1,5 +1,5 @@
-using GamesList.DTOs;
-using GamesList.DTOs.Requests;
+using GamesList.Dtos;
+using GamesList.Dtos.Requests;
 using GamesList.Models;
 using GamesList.Services.JogoService;
 using Microsoft.AspNetCore.Authorization;

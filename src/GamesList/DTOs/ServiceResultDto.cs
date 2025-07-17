@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace GamesList.DTOs
+namespace GamesList.Dtos
 {
     public class ServiceResultDto<T>
     {

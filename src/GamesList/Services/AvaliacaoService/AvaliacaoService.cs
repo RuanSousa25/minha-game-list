@@ -1,9 +1,10 @@
-using GamesList.DTOs;
-using GamesList.DTOs.Requests;
+using GamesList.Dtos;
+using GamesList.Dtos.Requests;
+using GamesList.Dtos.Responses;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.JogoService;
-using static GamesList.DTOs.Helpers.Results;
+using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.AvaliacaoService
 {
@@ -30,36 +31,36 @@ namespace GamesList.Services.AvaliacaoService
             return Ok(avaliacoes);
         }
 
-        public async Task<ServiceResultDto<string>> RemoveAvaliacoesByJogoIdAsync(int id)
+        public async Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
             if (avaliacoes == null || avaliacoes.Count == 0)
             {
                 _logger.LogWarning("Nenhuma avaliação encontrada para o jogo de Id {id}", id);
-                return NotFound<string>("Nenhuma avaliação encontrada.");
+                return NotFound<MessageResponseDto>("Nenhuma avaliação encontrada.");
             }
             _unitOfWork.AvaliacaoRepository.RemoveAvaliacoes(avaliacoes);
             _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
-            return Ok("Remoção de avaliações realizada com sucesso.");
+            return Ok(new MessageResponseDto("Remoção de avaliações realizada com sucesso."));
         }
-        public async Task<ServiceResultDto<string>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin)
+        public async Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin)
         {
             var avaliacao = await _unitOfWork.AvaliacaoRepository.GetAvaliacaoByIdAsync(id);
             if (avaliacao == null)
             {
                 _logger.LogWarning("Avaliação de id {id} não encontrada.", id);
-                return NotFound<string>("A avaliação não foi encontrada.");
+                return NotFound<MessageResponseDto>("A avaliação não foi encontrada.");
             }
             if (avaliacao.UsuarioId != userId && !isAdmin)
             {
                 _logger.LogWarning("Usuário de id {id} não tem permissão o suficiente para remover a avaliação de id {id2}", id, userId);
-                return Forbidden<string>("Você não tem permissão para remover essa avaliação.");
+                return Forbidden<MessageResponseDto>("Você não tem permissão para remover essa avaliação.");
             }
 
             _unitOfWork.AvaliacaoRepository.RemoveAvaliacao(avaliacao);
             await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("A avaliação de id {id} foi removida com sucesso.", id);
-            return Ok("Avaliação removida com sucesso");
+            return Ok(new MessageResponseDto("Avaliação removida com sucesso"));
         }
 
         public async Task<ServiceResultDto<Avaliacao>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request)

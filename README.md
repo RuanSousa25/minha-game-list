@@ -115,6 +115,7 @@ Retorna todos os jogos cadastrados, com gêneros, imagem de capa e nota média.
     "id": 1,
     "nome": "Disco Elysium",
     "nota": 10,
+    "avaliacoesCount": 1,
     "generos": [
       "RPG",
       "Hack and Slash",
@@ -155,6 +156,7 @@ Retorna detalhes completos de um jogo, incluindo avaliações.
   "id": 30,
   "nome": "Stardew Valley",
   "nota": 0,
+  "avaliacoesCount": 0,
   "generos": ["Farm"],
   "imagens": [
     "https://mygameliststorage.blob.core.windows.net/jogos-imagens/35a139c9-19e9-4502-ae85-768ed0c3f7d6.jpg"
@@ -383,6 +385,7 @@ Admin aprova uma sugestão de jogo.
   "id": 30,
   "nome": "Stardew Valley",
   "nota": 0,
+  "avaliacoesCount": 0,
   "generos": ["Farm"],
   "imagens": [
     "https://mygameliststorage.blob.core.windows.net/jogos-imagens/35a139c9-19e9-4502-ae85-768ed0c3f7d6.jpg"

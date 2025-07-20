@@ -65,11 +65,16 @@ namespace GamesList.Services.SugerirJogoService
                 _logger.LogWarning("Não foi encontrada a sugestão de {id}", id);
                 return NotFound<JogoDto>("Sugestão não encontrada");
             }
+            if (sugestao.Aprovado)
+            {
+                _logger.LogWarning("Sugestão já aprovada {id}", id);
+                return BadRequest<JogoDto>("Sugestão já aprovada");
+            }
             sugestao.Aprovado = true;
 
             var jogo = new Jogo { Generos = [.. sugestao.Generos], Nome = sugestao.Nome };
-            await _jogoService.AddJogoAsync(jogo); 
-           
+            await _jogoService.AddJogoAsync(jogo);
+            await _unitOfWork.CommitChangesAsync();
 
             var imagensSugestoes = sugestao.Imagens;
             foreach (var imagemSugestao in imagensSugestoes)

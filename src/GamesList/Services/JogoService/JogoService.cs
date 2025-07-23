@@ -56,7 +56,7 @@ namespace GamesList.Services.JogoService
             return Ok(result);
         }
 
-        public async Task<ServiceResultDto<JogoDto>> GetJogoAsync(int id)
+        public async Task<ServiceResultDto<JogoDto>> GetJogoDtoAsync(int id)
         {
             var jogo = await _unitOfWork.JogoRepository.GetJogoAsync(id);
             if (jogo == null)
@@ -65,6 +65,16 @@ namespace GamesList.Services.JogoService
             }
 
             return Ok(new JogoDto(jogo));
+        }   
+         public async Task<ServiceResultDto<Jogo>> GetJogoAsync(int id)
+        {
+            var jogo = await _unitOfWork.JogoRepository.GetJogoAsync(id);
+            if (jogo == null)
+            {
+                return NotFound<Jogo>("Jogo não encontrado");
+            }
+
+            return Ok(jogo);
         }   
     }
 }

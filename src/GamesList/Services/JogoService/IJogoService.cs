@@ -10,6 +10,7 @@ namespace GamesList.Services.JogoService
         public Task<ServiceResultDto<MessageResponseDto>> RemoveJogoAsync(int id);
         public Task<ServiceResultDto<Jogo>> AddJogoAsync(Jogo jogo);
         public Task<ServiceResultDto<bool>> CheckIfJogoExistsAsync(int id);
-        public Task<ServiceResultDto<JogoDto>> GetJogoAsync(int id);
+        public Task<ServiceResultDto<JogoDto>> GetJogoDtoAsync(int id);
+        public Task<ServiceResultDto<Jogo>> GetJogoAsync(int id);
     }
 }

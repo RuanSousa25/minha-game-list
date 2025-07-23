@@ -1,4 +1,5 @@
 using GamesList.Databases;
+using GamesList.Dtos.Responses;
 using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,18 +20,18 @@ namespace GamesList.Repositories.AvaliacaoRepository
 
         public async Task<Avaliacao?> GetAvaliacaoByUsuarioIdAndJogoIdAsync(int usuarioId, int jogoId)
         {
-            return await _appDbContext.Avaliacoes
-            .SingleOrDefaultAsync(a => a.UsuarioId == usuarioId && a.JogoId == jogoId);
+            return await _appDbContext.Avaliacoes.Include(a => a.Usuario).Include(a => a.Jogo)
+            .SingleOrDefaultAsync(a => a.Usuario.Id == usuarioId && a.Jogo.Id == jogoId);
         }
 
         public async Task<List<Avaliacao>> GetAvaliacoesByJogoIdAsync(int id)
         {
-            return await _appDbContext.Avaliacoes.Where(a => a.JogoId == id).ToListAsync();
+            return await _appDbContext.Avaliacoes.Include(a => a.Jogo).Include(a => a.Usuario).Where(a => a.Jogo.Id == id).ToListAsync();
         }
 
         public async Task<List<Avaliacao>> GetAvaliacoesByUsuarioIdAsync(int id)
         {
-             return await _appDbContext.Avaliacoes.Where(a => a.UsuarioId == id).ToListAsync();
+             return await _appDbContext.Avaliacoes.Include(a => a.Usuario).Include(a => a.Jogo).Where(a => a.Usuario.Id == id).ToListAsync();
         }
 
         public void RemoveAvaliacao(Avaliacao avaliacao)

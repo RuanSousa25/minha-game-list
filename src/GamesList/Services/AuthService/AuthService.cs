@@ -81,5 +81,12 @@ namespace GamesList.Services.AuthService
 
         [GeneratedRegex("^(?=.*[A-Za-z])(?=.*\\d).{8,}$")]
         private static partial Regex SenhaValidaRegex();
+
+        public async Task<ServiceResultDto<Usuario>> GetUsuarioByIdAsync(int id)
+        {
+            var usuario = await _unitOfWork.AuthRepository.GetUsuarioByIdAsync(id);
+            if (usuario == null) return NotFound<Usuario>("Usuário não encontrado");
+            return Ok(usuario);
+        }
     }
 }

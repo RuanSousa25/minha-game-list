@@ -23,7 +23,7 @@ namespace GamesList.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJogoAsync([FromRoute] int id)
         {
-            return FromResult(await _jogoService.GetJogoAsync(id));
+            return FromResult(await _jogoService.GetJogoDtoAsync(id));
         }
 
         [HttpDelete("{id}")]

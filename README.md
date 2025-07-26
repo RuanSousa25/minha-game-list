@@ -1,8 +1,9 @@
 # My Game List – API ASP.NET
 
 API para cadastro de jogos e avaliações de usuários.  
-**URL pública:** `https://minhagamelist.azurewebsites.net/`  
 **URL local (dev):** `http://localhost:5122/`
+**URL pública:** `https://minhagamelist.azurewebsites.net/`
+⚠️ Com o fim do plano gratuito, a URL pública deixou de funciona e o projeto precisa rodar localmente
 
 ## Rotas Disponíveis
 

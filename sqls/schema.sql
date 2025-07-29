@@ -61,12 +61,14 @@ CREATE TABLE avaliacoes (
 CREATE TABLE sugestoes_jogo (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL,
+    aprovador_id INTEGER,
     jogo_aprovado_id INTEGER,
     nome TEXT NOT NULL,
     aprovado BOOLEAN NOT NULL,
     data_sugestao TIMESTAMPTZ NOT NULL DEFAULT now(),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (jogo_aprovado_id) REFERENCES jogos(id) ON DELETE CASCADE
+    FOREIGN KEY (aprovador_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (jogo_aprovado_id) REFERENCES jogos(id) ON DELETE SET NULL UNIQUE
 );
 
 CREATE TABLE sugestoes_jogo_generos (

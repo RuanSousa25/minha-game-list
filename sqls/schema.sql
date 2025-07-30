@@ -19,7 +19,6 @@ CREATE TABLE jogos (
     id SERIAL PRIMARY KEY,
     nome TEXT NOT NULL UNIQUE
 );
-
 CREATE TABLE generos (
     id SERIAL PRIMARY KEY,
     nome TEXT NOT NULL UNIQUE
@@ -68,7 +67,7 @@ CREATE TABLE sugestoes_jogo (
     data_sugestao TIMESTAMPTZ NOT NULL DEFAULT now(),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (aprovador_id) REFERENCES usuarios(id) ON DELETE SET NULL,
-    FOREIGN KEY (jogo_aprovado_id) REFERENCES jogos(id) ON DELETE SET NULL UNIQUE
+    FOREIGN KEY (jogo_aprovado_id) REFERENCES jogos(id) ON DELETE SET NULL
 );
 
 CREATE TABLE sugestoes_jogo_generos (

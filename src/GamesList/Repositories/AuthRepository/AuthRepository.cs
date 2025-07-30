@@ -22,12 +22,12 @@ namespace GamesList.Repositories.AuthRepository
 
         public async Task<Usuario?> GetUsuarioByIdAsync(int id)
         {
-            return await _appDbContext.Usuarios.FindAsync(id);
+            return await _appDbContext.Usuarios.Include(u => u.Role).SingleOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<Usuario?> GetUsuarioByLoginAsync(string login)
         {
-            var user = await _appDbContext.Usuarios.SingleOrDefaultAsync(u => u.Login == login);
+            var user = await _appDbContext.Usuarios.Include(u => u.Role).SingleOrDefaultAsync(u => u.Login == login);
             return user;
         }
     }

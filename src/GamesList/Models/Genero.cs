@@ -9,6 +9,6 @@ namespace GamesList.Models
         [JsonIgnore]
         public ICollection<Jogo> Jogos { get; set; } = [];
         [JsonIgnore]
-        public ICollection<SugerirJogo> JogosSugeridos { get; set; } = [];
+        public ICollection<SugestaoJogo> JogosSugeridos { get; set; } = [];
     }
 }

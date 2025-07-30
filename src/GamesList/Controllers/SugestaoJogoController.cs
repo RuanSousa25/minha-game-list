@@ -1,7 +1,7 @@
 using System.Text.Json;
 using GamesList.Dtos.Helpers;
 using GamesList.Dtos.Requests;
-using GamesList.Services.SugerirJogoService;
+using GamesList.Services.SugestoesJogoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +10,9 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(ISugerirJogoService sugerirJogoService, ILogger<SugerirJogoController> logger) : ApiControllerBase<SugerirJogoController>(logger)
+    public class SugerirJogoController(ISugestoesJogoService sugerirJogoService, ILogger<SugerirJogoController> logger) : ApiControllerBase<SugerirJogoController>(logger)
     {
-        private readonly ISugerirJogoService _sugerirJogoService = sugerirJogoService;
+        private readonly ISugestoesJogoService _sugerirJogoService = sugerirJogoService;
         private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
 

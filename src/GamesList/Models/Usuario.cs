@@ -9,7 +9,7 @@ namespace GamesList.Models
         [JsonIgnore]
         public required string SenhaHash { get; set; }
         [JsonIgnore]
-        public bool IsAdmin { get; set; }
+        public required Role Role { get; set; }
         [JsonIgnore]
         public ICollection<Avaliacao> Avaliacoes { get; set; } = [];
     }

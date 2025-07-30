@@ -6,13 +6,13 @@ using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.BlobService
 {
-    public class BlobService : IBlobService
+    public class AzureBlobService : IBlobService
     {
-        private readonly ILogger<BlobService> _logger;
+        private readonly ILogger<AzureBlobService> _logger;
         private readonly BlobContainerClient _containerClient;
 
 
-        public BlobService(IConfiguration config, ILogger<BlobService> logger)
+        public AzureBlobService(IConfiguration config, ILogger<AzureBlobService> logger)
         {
             var connString = config.GetSection("AZURE_BLOB_CONNECTION_STRING").Value;
             var containerName = config.GetSection("CONTAINER_NAME").Value;

@@ -39,7 +39,13 @@ namespace GamesList.Services.AuthService
 
             var hash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
-            var user = new Usuario { Login = request.Login, SenhaHash = hash };
+            var role = await _unitOfWork.RoleRepository.GetRoleByRoleNome("usuario");
+            if (role == null)
+            {
+                _logger.LogWarning("Role padrão não encontrada.");
+                return ServerError<MessageResponseDto>("Ocorreu um erro inesperado ao cadastrar o usuário.");
+            }
+            var user = new Usuario { Login = request.Login, SenhaHash = hash, Role = role };
 
             await _unitOfWork.AuthRepository.AddUsuarioAsync(user);
             await _unitOfWork.CommitChangesAsync();
@@ -61,7 +67,7 @@ namespace GamesList.Services.AuthService
             var claims = new[]{
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.IsAdmin?"admin":"user")
+                new Claim(ClaimTypes.Role, user.Role.Nome)
             };
             var jwtSecret = _config["JWT_SECRET"];
             if (jwtSecret == null) return ServerError<LoginResponseDto>("Serviço indisponível.");

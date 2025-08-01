@@ -65,6 +65,7 @@ CREATE TABLE sugestoes_jogo (
     nome TEXT NOT NULL,
     aprovado BOOLEAN NOT NULL,
     data_sugestao TIMESTAMPTZ NOT NULL DEFAULT now(),
+    data_aprovacao TIMESTAMPTZ,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (aprovador_id) REFERENCES usuarios(id) ON DELETE SET NULL,
     FOREIGN KEY (jogo_aprovado_id) REFERENCES jogos(id) ON DELETE SET NULL

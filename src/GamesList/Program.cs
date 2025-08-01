@@ -33,7 +33,7 @@ string? connectionString = provider switch
 
 };
 var key = Environment.GetEnvironmentVariable("JWT_SECRET");
-if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(key)){ return; }
+if (string.IsNullOrWhiteSpace(connectionString)|| string.IsNullOrWhiteSpace(key)){ return; }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
@@ -81,7 +81,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJogoService, JogoService>();
 builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IImagensService, ImagensServices>();
-builder.Services.AddScoped<IBlobService, AzureBlobService>();
+if (provider == "azure") builder.Services.AddScoped<IBlobService, AzureBlobService>();
+else builder.Services.AddScoped<IBlobService, GCBlobService>();
 builder.Services.AddScoped<IAvaliacaoService, AvaliacaoService>(); 
 builder.Services.AddScoped(provider => new Lazy<IAvaliacaoService>(() =>
     provider.GetRequiredService<IAvaliacaoService>()));

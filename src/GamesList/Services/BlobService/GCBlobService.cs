@@ -18,7 +18,7 @@ namespace GamesList.Services.BlobService
         {
             _logger = logger;
             _bucketName = config["GCS_BUCKET_NAME"] ?? throw new ArgumentNullException("GCS_BUCKET_NAME Inexistente");
-            var credentialsPath = config["GCS_CREDNTIALS_PATH"] ?? throw new ArgumentNullException("GCS_CREDENTIALS_PATH Inexistente");
+            var credentialsPath = config["GCS_CREDENTIALS_PATH"] ?? throw new ArgumentNullException("GCS_CREDENTIALS_PATH Inexistente");
             var credential = GoogleCredential.FromFile(credentialsPath);
             _storageClient = StorageClient.Create(credential);
 

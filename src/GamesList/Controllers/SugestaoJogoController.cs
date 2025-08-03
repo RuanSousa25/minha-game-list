@@ -26,7 +26,7 @@ namespace GamesList.Controllers
 
         [HttpPost()]
         [Authorize]
-        public async Task<IActionResult> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagem)
+        public async Task<IActionResult> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagemCapa, [FromForm] IFormFile imagemIcone, [FromForm] List<IFormFile> imagensPromo)
         {
             if (string.IsNullOrWhiteSpace(sugestao)) return BadRequest("Campo de sugestão vazio.");
 
@@ -41,10 +41,12 @@ namespace GamesList.Controllers
             }
 
             if (request == null) return BadRequest("Não há sugestão para inserir.");
-            if (imagem == null) return BadRequest("Não há imagem para a sugestão.");
+            if (imagemCapa == null) return BadRequest("Não há imagem de capa para a sugestão.");
+             if (imagemIcone == null) return BadRequest("Não há imagem de ícone para a sugestão.");
+
             if (GetUserId() is not int userId) return Unauthorized();
 
-            var result = await _sugerirJogoService.SaveSugestaoJogoComImagemAsync(request, imagem, userId);
+            var result = await _sugerirJogoService.SaveSugestaoJogoComImagemAsync(request, imagemCapa, imagemIcone, userId);
             return FromResult(result);
         }
 

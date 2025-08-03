@@ -11,9 +11,9 @@ namespace GamesList.Services.SugestoesImagemService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly ILogger<SugestoesImagemService> _logger = logger;
 
-        public async Task<ServiceResultDto<MessageResponseDto>> SaveImagemAsync(int sugestaoJogoId, string url)
+        public async Task<ServiceResultDto<MessageResponseDto>> SaveImagemAsync(int sugestaoJogoId, string url, int tipoId)
         {
-            var imagem = new SugestaoImagem { SugestaoJogoId = sugestaoJogoId, Url = url, TipoId = 1 };
+            var imagem = new SugestaoImagem { SugestaoJogoId = sugestaoJogoId, Url = url, TipoId = tipoId };
             await _unitOfWork.SugestoesImagemRepository.AddImagemAsync(imagem);
             await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Imagem {img} inserida com sucesso.", url);

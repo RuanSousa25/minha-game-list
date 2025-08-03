@@ -35,25 +35,29 @@ namespace GamesList.Services.SugestoesJogoService
             _logger.LogInformation("Sugestão de jogo {nome} inserida com sucesso. Id da sugestão: {id}", sugestao.Nome, sugestao.Id);
             return Ok(sugestao.Id);
         }
-        public async Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagem, int userId)
+        public async Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagemCapa, IFormFile imagemIcone, int userId)
         {
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
-            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
-            if (!blobResult.Success)
-                return new ServiceResultDto<MessageResponseDto>()
-                {
-                    StatusCode = blobResult.StatusCode,
-                    Message = blobResult.Message,
-                    Success = blobResult.Success
-                };
 
             var sugestaoResult = await SaveSugestaoJogoAsync(request, userId);
             if (!sugestaoResult.Success) return ServerError<MessageResponseDto>("Não foi possível inserir a sugestão.");
 
-            var sugestaoImagemResult = await _sugestoesImagemService.SaveImagemAsync(sugestaoResult.Data, blobResult.Data.Url!);
-            if (!sugestaoImagemResult.Success) return sugestaoImagemResult;
+            var imagemCapaResult = await SaveImagem(imagemCapa, 1,sugestaoResult.Data);
+            if (!imagemCapaResult) _logger.LogError("Não foi possível inserir imagem de capa para o jogo {id}", sugestaoResult.Data);
+            var imagemIconeResult = await SaveImagem(imagemIcone, 2,sugestaoResult.Data);
+            if (!imagemIconeResult) _logger.LogError("Não foi possível inserir imagem de capa para o jogo {id}", sugestaoResult.Data);
 
             return Created(new MessageResponseDto("Sugestão inserida com sucesso"));
+        }
+        private async Task<bool> SaveImagem(IFormFile imagem, int tipoId, int jogoId)
+        {
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
+            var blobResult = await _blobService.UploadFileAsync(imagem.OpenReadStream(), fileName, imagem.ContentType);
+            if (!blobResult.Success) return false;
+            var sugestaoImagemResult = await _sugestoesImagemService.SaveImagemAsync(jogoId, blobResult.Data.Url!, tipoId);
+            if (!sugestaoImagemResult.Success) return false;
+
+            return true;
+
         }
 
         public async Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id)
@@ -81,7 +85,7 @@ namespace GamesList.Services.SugestoesJogoService
             {
                 await _imagensService.AddImagemAsync(new Imagem { Url = imagemSugestao.Url, JogoId = jogo.Id, TipoId = imagemSugestao.TipoId });
             }
-             await _unitOfWork.CommitChangesAsync();
+            await _unitOfWork.CommitChangesAsync();
             return Ok(new JogoDto(jogo));
         }
 

@@ -7,7 +7,7 @@ namespace GamesList.Models
         public required Jogo Jogo { get; set; }
         public int Nota { get; set; }
         public required string Opiniao { get; set; }
-        public DateTime Data { get; set; }
+        public DateTime DataCriacao { get; set; }
         
     }
 }

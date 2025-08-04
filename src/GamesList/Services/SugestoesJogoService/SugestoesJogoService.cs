@@ -60,7 +60,7 @@ namespace GamesList.Services.SugestoesJogoService
 
         }
 
-        public async Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id)
+        public async Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id, int usuarioId)
         {
             var sugestao =
             await _unitOfWork.SugerirJogoRepository.GetSugestaoJogoComRelacoesByIdAsync(id);
@@ -74,11 +74,16 @@ namespace GamesList.Services.SugestoesJogoService
                 _logger.LogWarning("Sugestão já aprovada {id}", id);
                 return BadRequest<JogoDto>("Sugestão já aprovada");
             }
-            sugestao.Aprovado = true;
+           
 
             var jogo = new Jogo { Generos = [.. sugestao.Generos], Nome = sugestao.Nome };
             await _jogoService.AddJogoAsync(jogo);
             await _unitOfWork.CommitChangesAsync();
+
+            sugestao.Aprovado = true;
+            sugestao.DataAprovacao = DateTime.UtcNow;
+            sugestao.JogoAprovadoId = jogo.Id;
+            sugestao.AprovadorId = usuarioId;
 
             var imagensSugestoes = sugestao.Imagens;
             foreach (var imagemSugestao in imagensSugestoes)

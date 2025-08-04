@@ -9,7 +9,7 @@ namespace GamesList.Services.SugestoesJogoService
     {
         public Task<ServiceResultDto<int>> SaveSugestaoJogoAsync(UploadGameRequest request, int userId);
         public Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagemCapa, IFormFile imagemIcone, int userId);
-        public Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id);
+        public Task<ServiceResultDto<JogoDto>> AprovarJogoAsync(int id, int usuarioId);
         public Task<ServiceResultDto<List<SugestaoJogoDto>>> ListSugerirJogoAsync();
         public Task<ServiceResultDto<MessageResponseDto>> RemoverSugestaoJogoAsync(int id);
         public Task<ServiceResultDto<SugestaoJogo>> FindSugestaoJogoAsync(int id);

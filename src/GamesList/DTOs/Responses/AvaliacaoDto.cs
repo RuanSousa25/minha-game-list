@@ -24,7 +24,7 @@ namespace GamesList.Dtos.Responses
                 JogoNome = avaliacao.Jogo?.Nome ?? string.Empty,
                 Nota = avaliacao.Nota,
                 Opiniao = avaliacao.Opiniao,
-                Data = avaliacao.Data,
+                Data = avaliacao.DataCriacao,
             };
 
         }

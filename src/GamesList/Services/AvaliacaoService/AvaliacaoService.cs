@@ -91,13 +91,13 @@ namespace GamesList.Services.AvaliacaoService
             if (avaliacao == null)
             {
                 avaliacao = new Avaliacao {
-                    Usuario = usuario, Nota = request.Nota, Opiniao = request.Opiniao, Data = DateTime.UtcNow, Jogo = jogo };
+                    Usuario = usuario, Nota = request.Nota, Opiniao = request.Opiniao, DataCriacao = DateTime.UtcNow, Jogo = jogo };
                 await _unitOfWork.AvaliacaoRepository.AddAvaliacaoAsync(avaliacao);
                 _logger.LogInformation("Avaliação nova adicionada. Jogo: {jogoId} | Usuario: {userId}", request.JogoId, userId);
             }
             else
             {
-                avaliacao.Data = DateTime.UtcNow;
+                avaliacao.DataCriacao = DateTime.UtcNow;
                 avaliacao.Opiniao = request.Opiniao;
                 avaliacao.Nota = request.Nota;
                 _unitOfWork.AvaliacaoRepository.UpdateAvaliacao(avaliacao);

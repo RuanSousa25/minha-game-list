@@ -54,7 +54,9 @@ namespace GamesList.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AprovarJogo([FromRoute] int id)
         {
-            var result = await _sugerirJogoService.AprovarJogoAsync(id);
+            var usuarioId = GetUserId();
+            if (usuarioId == null) return Unauthorized(); 
+            var result = await _sugerirJogoService.AprovarJogoAsync(id, (int)usuarioId);
             return FromResult(result);
         }
         [HttpPost("reprovar/{id}")]

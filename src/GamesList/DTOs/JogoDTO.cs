@@ -11,7 +11,6 @@ namespace GamesList.Dtos
         public int AvaliacoesCount { get; set; } = jogo.Avaliacoes.Count;
         public ICollection<string> Generos { get; set; } = [.. jogo.Generos.Select(g => g.Nome)];
         public string? ImagenCapa { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Capa)?.Url;
-        public string? ImagenIcon { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Icone)?.Url
-        ;
+        public string? ImagenIcon { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Icone)?.Url;
     }
 }

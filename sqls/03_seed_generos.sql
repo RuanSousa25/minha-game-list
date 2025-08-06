@@ -1,6 +1,4 @@
-SET search_path TO minha_game_list;
-
-INSERT INTO generos (Nome) VALUES
+INSERT INTO minha_game_list.generos (Nome) VALUES
 ('Ação'),
 ('Aventura'),
 ('RPG'),

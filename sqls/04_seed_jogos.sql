@@ -3,6 +3,6 @@ VALUES
 ('Disco Elysium: The Final Cut'),
 ('Hollow Knight'),
 ('Overwatch 2'),
-('Your Turn To Die -Death Game By Majority-')
+('Your Turn To Die -Death Game By Majority-');
 
 

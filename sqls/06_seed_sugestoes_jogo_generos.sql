@@ -1,8 +1,7 @@
-INSERT INTO minha_game_list.sugestoes_jogo_generos(sugestao_jogo_id, genero_id) VALUES 
+INSERT INTO minha_game_list.sugestoes_jogo_generos(genero_id, sugestao_jogo_id) VALUES 
 (51,1),
 (54,1),
 (59,1),
-(51,1),
 (85,1),
 (3,1),
 (2,2),
@@ -18,4 +17,4 @@ INSERT INTO minha_game_list.sugestoes_jogo_generos(sugestao_jogo_id, genero_id) 
 (39,4),
 (52,4),
 (54,4),
-(60,4),
+(60,4);

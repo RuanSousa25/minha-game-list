@@ -20,6 +20,5 @@ namespace GamesList.Common.Pagination
                 PageSize = paginationParams.PageSize
             };
         }
-
     }
 }

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GamesList.Common.Pagination;
 using GamesList.Databases;
 using GamesList.Dtos;
 using GamesList.Models;
@@ -48,6 +49,19 @@ namespace GamesList.Repositories.JogoRepository
             .Include(j => j.Generos)
             .Include(j => j.Imagens)
             .ToListAsync();
+            return jogos;
+        }
+
+        public async Task<PagedResult<JogoDto>> GetJogosPagedAsync(PaginationParams paginationParams)
+        {
+            var jogos =
+            await _appDbContext.Jogos
+            .Include(j => j.Avaliacoes)
+            .Include(j => j.Generos)
+            .Include(j => j.Imagens)
+            .OrderBy(j => j.Nome)
+            .Select(j => new JogoDto(j))
+            .ToPagedResultAsync(paginationParams);
             return jogos;
         }
 

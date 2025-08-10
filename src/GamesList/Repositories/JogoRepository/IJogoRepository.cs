@@ -1,3 +1,5 @@
+using GamesList.Common.Pagination;
+using GamesList.Dtos;
 using GamesList.Models;
 
 namespace GamesList.Repositories.JogoRepository
@@ -6,6 +8,7 @@ namespace GamesList.Repositories.JogoRepository
     {
 
         public Task<List<Jogo>> GetJogosAsync();
+        public Task<PagedResult<JogoDto>> GetJogosPagedAsync(PaginationParams paginationParams);
         public Task<Jogo?> GetJogoComRelacionamentoByIdAsync(int id);
         public Task<bool> RemoveJogoByIdAsync(int id);
         public Task<bool> CheckIfJogoExistsAsync(int id);

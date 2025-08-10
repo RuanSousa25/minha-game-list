@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos;
 using GamesList.Dtos.Requests;
 using GamesList.Models;
@@ -15,9 +16,9 @@ namespace GamesList.Controllers
 
 
         [HttpGet()]
-        public async Task<IActionResult> ListAllJogosAsync()
+        public async Task<IActionResult> ListAllJogosAsync([FromQuery] PaginationParams paginationParams)
         {
-            return FromResult(await _jogoService.ListJogosAsync());
+            return FromResult(await _jogoService.ListJogosAsync(paginationParams));
         }
 
         [HttpGet("{id}")]

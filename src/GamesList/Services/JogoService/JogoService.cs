@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos;
 using GamesList.Dtos.Responses;
 using GamesList.Models;
@@ -21,6 +22,10 @@ namespace GamesList.Services.JogoService
         {
             var jogos = await _unitOfWork.JogoRepository.GetJogosAsync();
             return Ok(jogos.Select(j => new JogoDto(j)).ToList());
+        }
+        public async Task<ServiceResultDto<PagedResult<JogoDto>>> ListJogosAsync(PaginationParams paginationParams)
+        {
+            return Ok(await _unitOfWork.JogoRepository.GetJogosPagedAsync(paginationParams));
         }
         public async Task<ServiceResultDto<MessageResponseDto>> RemoveJogoAsync(int id)
         {
@@ -75,6 +80,8 @@ namespace GamesList.Services.JogoService
             }
 
             return Ok(jogo);
-        }   
+        }
+
+
     }
 }

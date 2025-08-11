@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos;
 using GamesList.Dtos.Requests;
 using GamesList.Dtos.Responses;
@@ -17,20 +18,27 @@ namespace GamesList.Services.AvaliacaoService
         private readonly IAuthService _authService = authService;
 
 
-        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync()
+        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
-        public async Task<ServiceResultDto<List<AvaliacaoResponseDto>>> GetAvaliacoesByJogoIdAsync(int id)
+        public async Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByJogoIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
-            return Ok(avaliacoes.Select(AvaliacaoResponseDto.FromEntity).ToList());
+            return Ok(avaliacoes.Select(a => new AvaliacaoDto(a)).ToList());
         }
-
-        public async Task<ServiceResultDto<List<AvaliacaoResponseDto>>> GetAvaliacoesByUsuarioIdAsync(int id)
+        public async Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams)
+        {
+            return Ok(await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdPagedAsync(jogoId, paginationParams));
+        }
+        public async Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdAsync(int id)
         {
             var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdAsync(id);
-            return Ok(avaliacoes.Select(AvaliacaoResponseDto.FromEntity).ToList());
+            return Ok(avaliacoes.Select(a => new AvaliacaoDto(a)).ToList());
+        }
+        public async Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams)
+        {
+            return Ok(await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdPagedAsync(usuarioId, paginationParams));
         }
 
         public async Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int id)
@@ -65,25 +73,25 @@ namespace GamesList.Services.AvaliacaoService
             return Ok(new MessageResponseDto("Avaliação removida com sucesso"));
         }
 
-        public async Task<ServiceResultDto<AvaliacaoResponseDto>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request)
+        public async Task<ServiceResultDto<AvaliacaoDto>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request)
         {
             var resultDto = await _jogoService.GetJogoAsync(request.JogoId);
-            if (!resultDto.Success) return new ServiceResultDto<AvaliacaoResponseDto> { StatusCode = resultDto.StatusCode, Message = resultDto.Message };
+            if (!resultDto.Success) return new ServiceResultDto<AvaliacaoDto> { StatusCode = resultDto.StatusCode, Message = resultDto.Message };
             var jogo = resultDto.Data;
             if (jogo == null)
             {
                 _logger.LogWarning("Tentativa de avaliação para jogo inexistente. jogo: {id} | Usuario: {userId}.", request.JogoId, userId);
-                return NotFound<AvaliacaoResponseDto>("Jogo não encontrado.");
+                return NotFound<AvaliacaoDto>("Jogo não encontrado.");
             }
             if (request.Nota < 0 || request.Nota > 10)
             {
                 _logger.LogWarning("Nota inválida (abaixo de 0 ou acima de 10). valor da nota: {nota}| jogo: {jogoId} | Usuario: {userId}.", request.Nota, request.JogoId, userId);
-                return BadRequest<AvaliacaoResponseDto>("Nota inválida. Deve ser entre 0 e 10.");
+                return BadRequest<AvaliacaoDto>("Nota inválida. Deve ser entre 0 e 10.");
             }
 
             var usuarioResult = await _authService.GetUsuarioByIdAsync(userId);
             if(!usuarioResult.Success){
-                return NotFound<AvaliacaoResponseDto>("O usuário não foi encotnrado");
+                return NotFound<AvaliacaoDto>("O usuário não foi encotnrado");
             }
             var usuario = usuarioResult.Data;
 
@@ -108,12 +116,12 @@ namespace GamesList.Services.AvaliacaoService
             {
                 await _unitOfWork.CommitChangesAsync();
                 _logger.LogInformation("Commit de avaliação realizado. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId}", avaliacao.Id, request.JogoId, userId);
-                return Created(AvaliacaoResponseDto.FromEntity(avaliacao));
+                return Created(new AvaliacaoDto(avaliacao));
             }
             catch (Exception ex)
             {
                 _logger.LogError("Erro no commit da avaliação. Avaliacao: {avId} | Jogo: {jogoId} | Usuario: {userId} | Ex: {ex}", avaliacao.Id, request.JogoId, userId, ex);
-                return ServerError<AvaliacaoResponseDto>("Erro ao salvar avaliação.");
+                return ServerError<AvaliacaoDto>("Erro ao salvar avaliação.");
             }
         }
 

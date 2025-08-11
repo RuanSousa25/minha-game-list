@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos;
 using GamesList.Dtos.Requests;
 using GamesList.Dtos.Responses;
@@ -7,11 +8,13 @@ namespace GamesList.Services.AvaliacaoService
 {
     public interface IAvaliacaoService
     {
-        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync();
-        public Task<ServiceResultDto<List<AvaliacaoResponseDto>>> GetAvaliacoesByJogoIdAsync(int id);
-        public Task<ServiceResultDto<List<AvaliacaoResponseDto>>> GetAvaliacoesByUsuarioIdAsync(int id);
-        public Task<ServiceResultDto<AvaliacaoResponseDto>> SaveAvaliacaoAsync(int userId, AvaliacaoRequest request);
-        public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int id);
-        public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin);
+        public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync(int id);
+        public Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByJogoIdAsync(int jogoId);
+        public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams);
+        public Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdAsync(int usuarioId);
+        public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams);
+        public Task<ServiceResultDto<AvaliacaoDto>> SaveAvaliacaoAsync(int usuarioId, AvaliacaoRequest request);
+        public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int jogoId);
+        public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacaoByIdAsync(int id, int usuarioId, bool isAdmin);
     }
 }

@@ -7,7 +7,6 @@ namespace GamesList.Repositories.JogoRepository
     public interface IJogoRepository
     {
 
-        public Task<List<Jogo>> GetJogosAsync();
         public Task<PagedResult<JogoDto>> GetJogosPagedAsync(PaginationParams paginationParams);
         public Task<Jogo?> GetJogoComRelacionamentoByIdAsync(int id);
         public Task<bool> RemoveJogoByIdAsync(int id);

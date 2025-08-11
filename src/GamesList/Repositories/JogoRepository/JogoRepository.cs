@@ -40,18 +40,6 @@ namespace GamesList.Repositories.JogoRepository
             .FirstOrDefaultAsync(j => j.Id == id);
             return jogo;
         }
-
-        public async Task<List<Jogo>> GetJogosAsync()
-        {
-            var jogos =
-            await _appDbContext.Jogos
-            .Include(j => j.Avaliacoes)
-            .Include(j => j.Generos)
-            .Include(j => j.Imagens)
-            .ToListAsync();
-            return jogos;
-        }
-
         public async Task<PagedResult<JogoDto>> GetJogosPagedAsync(PaginationParams paginationParams)
         {
             var jogos =

@@ -18,11 +18,6 @@ namespace GamesList.Services.JogoService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IImagensService _imagensService = imagensService;
         private readonly Lazy<IAvaliacaoService> _avaliacaoService = avaliacaoService;
-        public async Task<ServiceResultDto<List<JogoDto>>> ListJogosAsync()
-        {
-            var jogos = await _unitOfWork.JogoRepository.GetJogosAsync();
-            return Ok(jogos.Select(j => new JogoDto(j)).ToList());
-        }
         public async Task<ServiceResultDto<PagedResult<JogoDto>>> ListJogosAsync(PaginationParams paginationParams)
         {
             return Ok(await _unitOfWork.JogoRepository.GetJogosPagedAsync(paginationParams));

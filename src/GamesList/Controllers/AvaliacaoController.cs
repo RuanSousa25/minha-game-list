@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos.Helpers;
 using GamesList.Dtos.Requests;
 using GamesList.Services.AvaliacaoService;
@@ -15,14 +16,14 @@ namespace GamesList.Controllers
 
 
         [HttpGet("jogo/{id}")]
-        public async Task<IActionResult> GetAvaliacoesByJogoIdAsync([FromRoute] int id)
+        public async Task<IActionResult> GetAvaliacoesByJogoIdAsync([FromRoute] int id, [FromQuery] PaginationParams paginationParams)
         {
-            return FromResult(await _avaliacaoService.GetAvaliacoesByJogoIdAsync(id));
+            return FromResult(await _avaliacaoService.GetAvaliacoesByJogoIdPagedAsync(id, paginationParams));
         }
         [HttpGet("usuario/{id}")]
-        public async Task<IActionResult> GetAvaliacoesByUsuarioIdAsync([FromRoute] int id)
+        public async Task<IActionResult> GetAvaliacoesByUsuarioIdAsync([FromRoute] int id, [FromQuery] PaginationParams paginationParams)
         {
-            return FromResult(await _avaliacaoService.GetAvaliacoesByUsuarioIdAsync(id));
+            return FromResult(await _avaliacaoService.GetAvaliacoesByUsuarioIdPagedAsync(id, paginationParams));
         }
         [HttpPost("jogo")]
         [Authorize]

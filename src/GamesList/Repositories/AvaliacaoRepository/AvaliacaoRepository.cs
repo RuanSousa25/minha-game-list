@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Databases;
 using GamesList.Dtos.Responses;
 using GamesList.Models;
@@ -29,9 +30,31 @@ namespace GamesList.Repositories.AvaliacaoRepository
             return await _appDbContext.Avaliacoes.Include(a => a.Jogo).Include(a => a.Usuario).Where(a => a.Jogo.Id == id).ToListAsync();
         }
 
+        public async Task<PagedResult<AvaliacaoDto>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams)
+        {
+            return
+            await _appDbContext.Avaliacoes
+            .Include(a => a.Jogo)
+            .Include(a => a.Usuario)
+            .Where(a => a.Jogo.Id == jogoId)
+            .Select(a => new AvaliacaoDto(a))
+            .ToPagedResultAsync(paginationParams);
+        }
+
         public async Task<List<Avaliacao>> GetAvaliacoesByUsuarioIdAsync(int id)
         {
              return await _appDbContext.Avaliacoes.Include(a => a.Usuario).Include(a => a.Jogo).Where(a => a.Usuario.Id == id).ToListAsync();
+        }
+
+        public async Task<PagedResult<AvaliacaoDto>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams)
+        {
+            return
+            await _appDbContext.Avaliacoes
+            .Include(a => a.Usuario)
+            .Include(a => a.Jogo)
+            .Where(a => a.Usuario.Id == usuarioId)
+            .Select(a => new AvaliacaoDto(a))
+            .ToPagedResultAsync(paginationParams);
         }
 
         public void RemoveAvaliacao(Avaliacao avaliacao)

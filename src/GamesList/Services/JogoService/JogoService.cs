@@ -18,7 +18,7 @@ namespace GamesList.Services.JogoService
         private readonly IUnitOfWork _unitOfWork = uow;
         private readonly IImagensService _imagensService = imagensService;
         private readonly Lazy<IAvaliacaoService> _avaliacaoService = avaliacaoService;
-        public async Task<ServiceResultDto<PagedResult<JogoDto>>> ListJogosAsync(PaginationParams paginationParams)
+        public async Task<ServiceResultDto<PagedResult<JogoDto>>> GetJogosPagedAsync(PaginationParams paginationParams)
         {
             return Ok(await _unitOfWork.JogoRepository.GetJogosPagedAsync(paginationParams));
         }

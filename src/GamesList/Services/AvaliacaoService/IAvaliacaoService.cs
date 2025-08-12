@@ -9,9 +9,7 @@ namespace GamesList.Services.AvaliacaoService
     public interface IAvaliacaoService
     {
         public Task<ServiceResultDto<Avaliacao>> GetAvaliacaoByIdAsync(int id);
-        public Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByJogoIdAsync(int jogoId);
         public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams);
-        public Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdAsync(int usuarioId);
         public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams);
         public Task<ServiceResultDto<AvaliacaoDto>> SaveAvaliacaoAsync(int usuarioId, AvaliacaoRequest request);
         public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int jogoId);

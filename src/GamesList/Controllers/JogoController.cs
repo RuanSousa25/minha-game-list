@@ -16,9 +16,9 @@ namespace GamesList.Controllers
 
 
         [HttpGet()]
-        public async Task<IActionResult> ListAllJogosAsync([FromQuery] PaginationParams paginationParams)
+        public async Task<IActionResult> GetJogosPagedAsync([FromQuery] PaginationParams paginationParams)
         {
-            return FromResult(await _jogoService.ListJogosAsync(paginationParams));
+            return FromResult(await _jogoService.GetJogosPagedAsync(paginationParams));
         }
 
         [HttpGet("{id}")]

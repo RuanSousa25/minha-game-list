@@ -7,7 +7,6 @@ namespace GamesList.Repositories.AvaliacaoRepository
     public interface IAvaliacaoRepository
     {
         public Task<Avaliacao?> GetAvaliacaoByIdAsync(int id);
-        public Task<List<Avaliacao>> GetAvaliacoesByUsuarioIdAsync(int usuarioId);
         public Task<PagedResult<AvaliacaoDto>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams);
         public Task<List<Avaliacao>> GetAvaliacoesByJogoIdAsync(int jogoId);
          public Task<PagedResult<AvaliacaoDto>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams);

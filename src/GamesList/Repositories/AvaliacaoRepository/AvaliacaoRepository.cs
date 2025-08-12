@@ -40,12 +40,6 @@ namespace GamesList.Repositories.AvaliacaoRepository
             .Select(a => new AvaliacaoDto(a))
             .ToPagedResultAsync(paginationParams);
         }
-
-        public async Task<List<Avaliacao>> GetAvaliacoesByUsuarioIdAsync(int id)
-        {
-             return await _appDbContext.Avaliacoes.Include(a => a.Usuario).Include(a => a.Jogo).Where(a => a.Usuario.Id == id).ToListAsync();
-        }
-
         public async Task<PagedResult<AvaliacaoDto>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams)
         {
             return

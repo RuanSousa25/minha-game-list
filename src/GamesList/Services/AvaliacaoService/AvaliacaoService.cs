@@ -22,19 +22,9 @@ namespace GamesList.Services.AvaliacaoService
         {
             throw new NotImplementedException();
         }
-        public async Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByJogoIdAsync(int id)
-        {
-            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
-            return Ok(avaliacoes.Select(a => new AvaliacaoDto(a)).ToList());
-        }
         public async Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams)
         {
             return Ok(await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdPagedAsync(jogoId, paginationParams));
-        }
-        public async Task<ServiceResultDto<List<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdAsync(int id)
-        {
-            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdAsync(id);
-            return Ok(avaliacoes.Select(a => new AvaliacaoDto(a)).ToList());
         }
         public async Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams)
         {

@@ -30,9 +30,7 @@ namespace GamesList.Services.JogoService
                 _logger.LogWarning("Jogo {id} não econtrado no banco de dados.", id);
                 return NotFound<MessageResponseDto>("Jogo não encontrado.");
             }
-            jogo.Generos.Clear();
-            await _avaliacaoService.Value.RemoveAvaliacoesByJogoIdAsync(id);
-            await _imagensService.RemoveImagensByJogoIdAsync(id);
+            await _unitOfWork.JogoRepository.RemoveJogoByIdAsync(id);
             try
             {
                 await _unitOfWork.CommitChangesAsync();

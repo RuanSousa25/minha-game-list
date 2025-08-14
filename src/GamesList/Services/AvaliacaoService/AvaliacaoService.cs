@@ -30,19 +30,6 @@ namespace GamesList.Services.AvaliacaoService
         {
             return Ok(await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByUsuarioIdPagedAsync(usuarioId, paginationParams));
         }
-
-        public async Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int id)
-        {
-            var avaliacoes = await _unitOfWork.AvaliacaoRepository.GetAvaliacoesByJogoIdAsync(id);
-            if (avaliacoes == null || avaliacoes.Count == 0)
-            {
-                _logger.LogWarning("Nenhuma avaliação encontrada para o jogo de Id {id}", id);
-                return NotFound<MessageResponseDto>("Nenhuma avaliação encontrada.");
-            }
-            _unitOfWork.AvaliacaoRepository.RemoveAvaliacoes(avaliacoes);
-            _logger.LogInformation("Remoção de {length} avaliações do jogo de id {id} realizadas com sucesso.", avaliacoes!.Count, id);
-            return Ok(new MessageResponseDto("Remoção de avaliações realizada com sucesso."));
-        }
         public async Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacaoByIdAsync(int id, int userId, bool isAdmin)
         {
             var avaliacao = await _unitOfWork.AvaliacaoRepository.GetAvaliacaoByIdAsync(id);

@@ -9,6 +9,7 @@ using GamesList.Services.ImagensService;
 using GamesList.Services.SugestoesImagemService;
 using GamesList.Services.JogoService;
 using static GamesList.Dtos.Helpers.Results;
+using GamesList.Common.Pagination;
 
 namespace GamesList.Services.SugestoesJogoService
 {
@@ -94,10 +95,9 @@ namespace GamesList.Services.SugestoesJogoService
             return Ok(new JogoDto(jogo));
         }
 
-        public async Task<ServiceResultDto<List<SugestaoJogoDto>>> ListSugerirJogoAsync()
+        public async Task<ServiceResultDto<PagedResult<SugestaoJogoDto>>> ListSugerirJogoPagedAsync(PaginationParams paginationParams)
         {
-            var sugestoes = await _unitOfWork.SugerirJogoRepository.ListSugestoesJogosAsync();
-            return Ok(sugestoes.Select(s => new SugestaoJogoDto(s)).ToList());
+            return Ok(await _unitOfWork.SugerirJogoRepository.ListSugestoesJogosPagedAsync(paginationParams));
         }
         public async Task<ServiceResultDto<MessageResponseDto>> RemoverSugestaoJogoAsync(int id)
         {

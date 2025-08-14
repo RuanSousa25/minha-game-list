@@ -12,7 +12,6 @@ namespace GamesList.Services.AvaliacaoService
         public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByJogoIdPagedAsync(int jogoId, PaginationParams paginationParams);
         public Task<ServiceResultDto<PagedResult<AvaliacaoDto>>> GetAvaliacoesByUsuarioIdPagedAsync(int usuarioId, PaginationParams paginationParams);
         public Task<ServiceResultDto<AvaliacaoDto>> SaveAvaliacaoAsync(int usuarioId, AvaliacaoRequest request);
-        public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacoesByJogoIdAsync(int jogoId);
         public Task<ServiceResultDto<MessageResponseDto>> RemoveAvaliacaoByIdAsync(int id, int usuarioId, bool isAdmin);
     }
 }

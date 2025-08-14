@@ -1,4 +1,5 @@
 using System.Text.Json;
+using GamesList.Common.Pagination;
 using GamesList.Dtos.Helpers;
 using GamesList.Dtos.Requests;
 using GamesList.Services.SugestoesJogoService;
@@ -10,17 +11,17 @@ namespace GamesList.Controllers
 {
     [ApiController]
     [Route("api/sugerirjogo")]
-    public class SugerirJogoController(ISugestoesJogoService sugerirJogoService, ILogger<SugerirJogoController> logger) : ApiControllerBase<SugerirJogoController>(logger)
+    public class SugerirJogoController(ISugestoesJogoService sugestoesJogoService, ILogger<SugerirJogoController> logger) : ApiControllerBase<SugerirJogoController>(logger)
     {
-        private readonly ISugestoesJogoService _sugerirJogoService = sugerirJogoService;
+        private readonly ISugestoesJogoService _sugestoesJogoService = sugestoesJogoService;
         private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
 
         [HttpGet()]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> ListSugestaoJogo()
+        public async Task<IActionResult> ListSugestaoJogo([FromQuery] PaginationParams paginationParams)
         {
-            var result = await _sugerirJogoService.ListSugerirJogoAsync();
+            var result = await _sugestoesJogoService.ListSugerirJogoPagedAsync(paginationParams);
             return FromResult(result);
         }
 
@@ -46,7 +47,7 @@ namespace GamesList.Controllers
 
             if (GetUserId() is not int userId) return Unauthorized();
 
-            var result = await _sugerirJogoService.SaveSugestaoJogoComImagemAsync(request, imagemCapa, imagemIcone, userId);
+            var result = await _sugestoesJogoService.SaveSugestaoJogoComImagemAsync(request, imagemCapa, imagemIcone, userId);
             return FromResult(result);
         }
 
@@ -56,14 +57,14 @@ namespace GamesList.Controllers
         {
             var usuarioId = GetUserId();
             if (usuarioId == null) return Unauthorized(); 
-            var result = await _sugerirJogoService.AprovarJogoAsync(id, (int)usuarioId);
+            var result = await _sugestoesJogoService.AprovarJogoAsync(id, (int)usuarioId);
             return FromResult(result);
         }
         [HttpPost("reprovar/{id}")]
         [Authorize]
         public async Task<IActionResult> ReprovarJogo([FromRoute] int id)
         {
-            var sugestaoResult = await _sugerirJogoService.FindSugestaoJogoAsync(id);
+            var sugestaoResult = await _sugestoesJogoService.FindSugestaoJogoAsync(id);
             if (sugestaoResult == null) return NotFound("Sugestão de jogo não encontrada");
             if (!sugestaoResult.Success) return FromResult(sugestaoResult);
 
@@ -71,7 +72,7 @@ namespace GamesList.Controllers
             var userId = ClaimsHelper.GetUserId(User);
             var userRole = ClaimsHelper.GetUserRole(User);
             if (data.UsuarioId != userId && userRole != "admin") return Forbid();
-            return FromResult( await _sugerirJogoService.RemoverSugestaoJogoAsync(id));
+            return FromResult( await _sugestoesJogoService.RemoverSugestaoJogoAsync(id));
         }
         
     }

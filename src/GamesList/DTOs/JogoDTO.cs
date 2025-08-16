@@ -10,7 +10,7 @@ namespace GamesList.Dtos
         public int Nota { get; set; } = jogo.Avaliacoes.Count > 0 ? (int)Math.Round(jogo.Avaliacoes.Average(a => a.Nota)) : 0;
         public int AvaliacoesCount { get; set; } = jogo.Avaliacoes.Count;
         public ICollection<string> Generos { get; set; } = [.. jogo.Generos.Select(g => g.Nome)];
-        public string? ImagenCapa { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Capa)?.Url;
-        public string? ImagenIcon { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Icone)?.Url;
+        public string? ImagemCapa { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Capa)?.Url;
+        public string? ImagemIcon { get; set; } = jogo.Imagens.SingleOrDefault(i => i.TipoId == (int)TipoImagemEnum.Icone)?.Url;
     }
 }

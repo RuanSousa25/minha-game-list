@@ -1,4 +1,4 @@
-INSERT INTO minha_game_list.jogos_generos(genero_id, sugestao_jogo_id) VALUES 
+INSERT INTO minha_game_list.jogos_generos(genero_id, jogo_id) VALUES 
 (51,1),
 (54,1),
 (59,1),

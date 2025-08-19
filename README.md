@@ -11,7 +11,7 @@ API para cadastro de jogos e avaliações de usuários.
 | ------ | ---------------------------------- | ------ | --------------------------------------------------------------- | ------------------------- |
 | 1      | `/api/auth/register`               | POST   | Registra um novo usuário                                        | Nenhuma                   |
 | 2      | `/api/auth/login`                  | POST   | Retorna um token JWT para autenticação                          | Nenhuma                   |
-| 3      | `/api/jogos`                       | GET    | Retorna todos os jogos com gêneros, imagem de capa e nota média | Nenhuma                   |
+| 3      | `/api/jogos?page=1&pageSize=10`    | GET    | Retorna todos os jogos com gêneros, imagem de capa e nota média | Nenhuma                   |
 | 4      | `/api/jogos/{id}`                  | GET    | Retorna jogo com todas as informações detalhadas e avaliações.  | Nenhuma                   |
 | 5      | `/api/jogos/{id}`                  | DELETE | Remove jogo do banco de dados                                   | `admin`                   |
 | 6      | `/api/generos`                     | GET    | Retorna todos os gêneros de jogos cadastrados.                  | Nenhuma                   |
@@ -105,32 +105,30 @@ Retorna todos os jogos cadastrados, com gêneros, imagem de capa e nota média.
 **Requisição:**
 
 - Método: `GET`
-- URL: `/api/jogos`
+- URL: `/api/jogos?page=1&pageSize=10`
 - Autenticação: Não necessária
 
 **Resposta (200 OK):**
 
 ```json
-[
-  {
-    "id": 1,
-    "nome": "Disco Elysium",
-    "nota": 10,
-    "avaliacoesCount": 1,
-    "generos": [
-      "RPG",
-      "Hack and Slash",
-      "Fantasia",
-      "Rhythm",
-      "Narrativo",
-      "Survival Horror"
-    ],
-    "imagens": [
-      "https://mygameliststorage.blob.core.windows.net/jogos-imagens/disco-elysium.jpg"
-    ]
-  },
-  "..."
-]
+{
+  "items": [
+    {
+      "id": 1,
+      "nome": "Disco Elysium: The Final Cut",
+      "nota": 0,
+      "avaliacoesCount": 0,
+      "generos": ["RPG", "Narrativo", "Indie", "Investigação", "Isométrico"],
+      "imagemCapa": "https://storage.googleapis.com/mygameslist-bucket/7d077e03-5a5e-4bcc-83ac-9ab25c31d08a.jpg",
+      "imagemIcon": "https://storage.googleapis.com/mygameslist-bucket/996be1d9-cf29-4821-a8a4-3bae90841a09.ico"
+    },
+    "..."
+  ],
+  "totalItems": 4,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 1
+}
 ```
 
 **Erros possíveis:**
@@ -154,14 +152,13 @@ Retorna detalhes completos de um jogo, incluindo avaliações.
 
 ```json
 {
-  "id": 30,
-  "nome": "Stardew Valley",
+  "id": 1,
+  "nome": "Disco Elysium: The Final Cut",
   "nota": 0,
   "avaliacoesCount": 0,
-  "generos": ["Farm"],
-  "imagens": [
-    "https://mygameliststorage.blob.core.windows.net/jogos-imagens/35a139c9-19e9-4502-ae85-768ed0c3f7d6.jpg"
-  ]
+  "generos": ["RPG", "Narrativo", "Indie", "Investigação", "Isométrico"],
+  "imagemCapa": "https://storage.googleapis.com/mygameslist-bucket/7d077e03-5a5e-4bcc-83ac-9ab25c31d08a.jpg",
+  "imagemIcon": "https://storage.googleapis.com/mygameslist-bucket/996be1d9-cf29-4821-a8a4-3bae90841a09.ico"
 }
 ```
 

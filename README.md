@@ -7,23 +7,23 @@ API para cadastro de jogos e avaliações de usuários.
 
 ## Rotas Disponíveis
 
-| Índice | Rota                               | Método | Descrição                                                       | Permissão                 |
-| ------ | ---------------------------------- | ------ | --------------------------------------------------------------- | ------------------------- |
-| 1      | `/api/auth/register`               | POST   | Registra um novo usuário                                        | Nenhuma                   |
-| 2      | `/api/auth/login`                  | POST   | Retorna um token JWT para autenticação                          | Nenhuma                   |
-| 3      | `/api/jogos?page=1&pageSize=10`    | GET    | Retorna todos os jogos com gêneros, imagem de capa e nota média | Nenhuma                   |
-| 4      | `/api/jogos/{id}`                  | GET    | Retorna jogo com todas as informações detalhadas e avaliações.  | Nenhuma                   |
-| 5      | `/api/jogos/{id}`                  | DELETE | Remove jogo do banco de dados                                   | `admin`                   |
-| 6      | `/api/generos`                     | GET    | Retorna todos os gêneros de jogos cadastrados.                  | Nenhuma                   |
-| 7      | `/api/generos?id={id}&id={id2}...` | GET    | Retorna todos os gêneros de jogos filtrados na consulta.        | Nenhuma                   |
-| 8      | `/api/sugerirjogo`                 | POST   | Usuário sugere um jogo para aprovação                           | `user`                    |
-| 9      | `/api/sugerirjogo`                 | GET    | Retorna uma lista de todos as sugestões de jogos                | `admin`                   |
-| 10     | `/api/sugerirjogo/aprovar/{id}`    | POST   | Admin aprova jogo previamente sugerido                          | `admin`                   |
-| 11     | `/api/sugerirjogo/reprovar/{id}`   | DELETE | Admin reprova jogo previamente sugerido                         | `admin`                   |
-| 12     | `/api/avaliacoes/jogo`             | POST   | Cria ou atualiza avaliação de um jogo                           | `user`                    |
-| 13     | `/api/avaliacoes/jogo/{id}`        | GET    | Retorna todas as avaliações de um jogo                          | Nenhuma                   |
-| 14     | `/api/avaliacoes/usuario/{id}`     | GET    | Retorna todas as avaliações feitas por um usuário               | Nenhuma                   |
-| 15     | `/api/avaliacoes/{id}`             | DELETE | Remove avaliação do banco                                       | `user` (autor) ou `admin` |
+| Índice | Rota                                              | Método | Descrição                                                       | Permissão                 |
+| ------ | ------------------------------------------------- | ------ | --------------------------------------------------------------- | ------------------------- |
+| 1      | `/api/auth/register`                              | POST   | Registra um novo usuário                                        | Nenhuma                   |
+| 2      | `/api/auth/login`                                 | POST   | Retorna um token JWT para autenticação                          | Nenhuma                   |
+| 3      | `/api/jogos?page=1&pageSize=10`                   | GET    | Retorna todos os jogos com gêneros, imagem de capa e nota média | Nenhuma                   |
+| 4      | `/api/jogos/{id}`                                 | GET    | Retorna jogo com todas as informações detalhadas e avaliações.  | Nenhuma                   |
+| 5      | `/api/jogos/{id}`                                 | DELETE | Remove jogo do banco de dados                                   | `admin`                   |
+| 6      | `/api/generos`                                    | GET    | Retorna todos os gêneros de jogos cadastrados.                  | Nenhuma                   |
+| 7      | `/api/generos?id={id}&id={id2}...`                | GET    | Retorna todos os gêneros de jogos filtrados na consulta.        | Nenhuma                   |
+| 8      | `/api/sugerirjogo`                                | POST   | Usuário sugere um jogo para aprovação                           | `user`                    |
+| 9      | `/api/sugerirjogo?page=1&pageSize=10`             | GET    | Retorna uma lista de das sugestões de jogos paginada            | `admin`                   |
+| 10     | `/api/sugerirjogo/aprovar/{id}`                   | POST   | Admin aprova jogo previamente sugerido                          | `admin`                   |
+| 11     | `/api/sugerirjogo/reprovar/{id}`                  | DELETE | Admin reprova jogo previamente sugerido                         | `admin`                   |
+| 12     | `/api/avaliacoes/jogo`                            | POST   | Cria ou atualiza avaliação de um jogo                           | `user`                    |
+| 13     | `/api/avaliacoes/jogo/{id}?page=1&pageSize=10`    | GET    | Retorna avaliações de um jogo paginadas                         | Nenhuma                   |
+| 14     | `/api/avaliacoes/usuario/{id}?page=1&pageSize=10` | GET    | Retorna avaliações feitas por um usuário paginadas              | Nenhuma                   |
+| 15     | `/api/avaliacoes/{id}`                            | DELETE | Remove avaliação do banco                                       | `user` (autor) ou `admin` |
 
 ### 1. `POST /api/auth/register`
 
@@ -97,7 +97,7 @@ Autentica o usuário e retorna um token JWT.
 
 ---
 
-### 3. `GET /api/jogos`
+### 3. `GET /api/jogos?page=1&pageSize=10`
 
 **Descrição:**  
 Retorna todos os jogos cadastrados, com gêneros, imagem de capa e nota média.
@@ -310,7 +310,7 @@ _Exemplo para campo sugestao_
 
 ---
 
-### 9. `GET /api/sugerirjogo`
+### 9. `GET /api/sugerirjogo?page=1&pageSize=10`
 
 **Descrição:**  
 Admin visualiza todas as sugestões de jogos.
@@ -318,43 +318,49 @@ Admin visualiza todas as sugestões de jogos.
 **Requisição:**
 
 - Método: `GET`
-- URL: `/api/sugerirjogo`
+- URL: `/api/sugerirjogo?page=1&pageSize=10`
 - Autenticação: `admin`
 
 **Resposta (200 OK):**
 
 ```json
-[
-  {
-    "id": 10,
-    "usuarioId": 2,
-    "nome": "Stardew Valley",
-    "generos": ["Farm"],
-    "imagens": [
-      "https://mygameliststorage.blob.core.windows.net/jogos-imagens/35a139c9-19e9-4502-ae85-768ed0c3f7d6.jpg"
-    ],
-    "dataSugestao": "2025-07-03T00:48:52.043",
-    "aprovado": true
-  },
-  {
-    "id": 11,
-    "usuarioId": 5,
-    "nome": "Your Turn To Die -Death Game By Majority-",
-    "generos": [
-      "Aventura",
-      "Terror",
-      "Puzzle",
-      "Horror Psicológico",
-      "Visual Novel"
-    ],
-    "imagens": [
-      "https://mygameliststorage.blob.core.windows.net/jogos-imagens/76dd6a10-4341-4478-b980-f576db6a76dd.jpg"
-    ],
-    "dataSugestao": "2025-07-06T23:31:35.443",
-    "aprovado": false
-  },
-  "..."
-]
+{
+  "items": [
+    {
+      "id": 10,
+      "usuarioId": 2,
+      "nome": "Stardew Valley",
+      "generos": ["Farm"],
+      "imagens": [
+        "https://mygameliststorage.blob.core.windows.net/jogos-imagens/35a139c9-19e9-4502-ae85-768ed0c3f7d6.jpg"
+      ],
+      "dataSugestao": "2025-07-03T00:48:52.043",
+      "aprovado": true
+    },
+    {
+      "id": 11,
+      "usuarioId": 5,
+      "nome": "Your Turn To Die -Death Game By Majority-",
+      "generos": [
+        "Aventura",
+        "Terror",
+        "Puzzle",
+        "Horror Psicológico",
+        "Visual Novel"
+      ],
+      "imagens": [
+        "https://mygameliststorage.blob.core.windows.net/jogos-imagens/76dd6a10-4341-4478-b980-f576db6a76dd.jpg"
+      ],
+      "dataSugestao": "2025-07-06T23:31:35.443",
+      "aprovado": false
+    },
+    "..."
+  ],
+  "totalItems": 3,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 1
+}
 ```
 
 **Erros possíveis:**
@@ -468,7 +474,7 @@ Cria ou atualiza uma avaliação de jogo por um usuário.
 
 ---
 
-### 13. `GET /api/avaliacoes/jogo/{id}`
+### 13. `GET /api/avaliacoes/jogo/{id}?page=1&pageSize=10`
 
 **Descrição:**  
 Retorna todas as avaliações de um jogo.
@@ -476,23 +482,29 @@ Retorna todas as avaliações de um jogo.
 **Requisição:**
 
 - Método: `GET`
-- URL: `/api/avaliacoes/jogo/{id}`
+- URL: `/api/avaliacoes/jogo/{id}?page=1&pageSize=10`
 - Autenticação: Não necessária
 
 **Resposta (200 OK):**
 
 ```json
-[
-  {
-    "id": 1,
-    "usuarioId": 1,
-    "jogoId": 1,
-    "nota": 10,
-    "opiniao": "Ótimo jogo! A história me prendeu do início ao fim e me emocionou a cada segundo. Muita satisfação em conhecer uma obra tão intimista como essa, o meu jogo favorito para sempre.",
-    "data": "2025-06-29T18:59:39.437"
-  },
-  "..."
-]
+{
+  "items": [
+    {
+      "id": 1,
+      "usuarioId": 1,
+      "jogoId": 1,
+      "nota": 10,
+      "opiniao": "Ótimo jogo! A história me prendeu do início ao fim e me emocionou a cada segundo. Muita satisfação em conhecer uma obra tão intimista como essa, o meu jogo favorito para sempre.",
+      "data": "2025-06-29T18:59:39.437"
+    },
+    "..."
+  ],
+  "totalItems": 2,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 1
+}
 ```
 
 **Erros possíveis:**
@@ -502,7 +514,7 @@ Retorna todas as avaliações de um jogo.
 
 ---
 
-### 14. `GET /api/avaliacoes/usuario/{id}`
+### 14. `GET /api/avaliacoes/usuario/{id}?page=1&pageSize=10`
 
 **Descrição:**  
 Retorna todas as avaliações feitas por um usuário.
@@ -510,13 +522,14 @@ Retorna todas as avaliações feitas por um usuário.
 **Requisição:**
 
 - Método: `GET`
-- URL: `/api/avaliacoes/usuario/{id}`
+- URL: `/api/avaliacoes/usuario/{id}?page=1&pageSize=10`
 - Autenticação: Não necessária
 
 **Resposta (200 OK):**
 
 ```json
-[
+{
+  "items": [
   {
     "id": 7,
     "usuarioId": 5,
@@ -526,7 +539,12 @@ Retorna todas as avaliações feitas por um usuário.
     "data": "2025-07-06T23:33:44.713"
   }
   "..."
-]
+],
+  "totalItems": 5,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 1
+}
 ```
 
 **Erros possíveis:**

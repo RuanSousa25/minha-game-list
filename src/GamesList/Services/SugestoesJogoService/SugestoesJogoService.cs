@@ -29,6 +29,16 @@ namespace GamesList.Services.SugestoesJogoService
 
         public async Task<ServiceResultDto<int>> SaveSugestaoJogoAsync(UploadGameRequest request, int userId)
         {
+            if (request.Nome.Length > 60)
+            {
+                _logger.LogWarning("Sugestão de jogo com mais de 60 caracteres. Usuário Id:{userId} ", userId);
+                return BadRequest<int>("O nome do jogo não deve conter mais de 60 caracteres.");
+            }
+            if (request.Generos.Count > 6 && request.Generos.Count < 1)
+            {
+                _logger.LogWarning("Sugestão de jogo com quantidade inválida de gêneros cadastrados. Count: {count}", request.Generos.Count);
+                return BadRequest<int>("O jogo deve conter entre 1 a 6 gêneros.");
+            }
             var generos = await _unitOfWork.GeneroRepository.GetGenerosByGenerosIdsAsync([.. request.Generos]);
             var sugestao = new SugestaoJogo { UsuarioId = userId, Nome = request.Nome, Generos = generos, DataSugestao = DateTime.UtcNow, Aprovado = false };
             await _unitOfWork.SugerirJogoRepository.AddSugestaoJogoAsync(sugestao);
@@ -40,7 +50,7 @@ namespace GamesList.Services.SugestoesJogoService
         {
 
             var sugestaoResult = await SaveSugestaoJogoAsync(request, userId);
-            if (!sugestaoResult.Success) return ServerError<MessageResponseDto>("Não foi possível inserir a sugestão.");
+            if (!sugestaoResult.Success) return ServerError<MessageResponseDto>(sugestaoResult.Message!);
 
             var imagemCapaResult = await SaveImagem(imagemCapa, 1,sugestaoResult.Data);
             if (!imagemCapaResult) _logger.LogError("Não foi possível inserir imagem de capa para o jogo {id}", sugestaoResult.Data);

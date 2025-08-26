@@ -36,6 +36,11 @@ namespace GamesList.Services.AuthService
                 _logger.LogWarning("Usuário {usuario} já existe no banco de dados.", request.Login);
                 return Conflict<MessageResponseDto>("Usuário já existe");
             }
+            if (request.Login.Length > 20)
+            {
+                _logger.LogWarning("Login de usuário com mais de 20 caracteres.");
+                return BadRequest<MessageResponseDto>("O login de usuário não deve conter mais de 20 caracteres.");
+            }
 
             var hash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 

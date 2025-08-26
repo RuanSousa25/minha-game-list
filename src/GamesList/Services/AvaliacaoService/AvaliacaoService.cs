@@ -6,6 +6,7 @@ using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
 using GamesList.Services.AuthService;
 using GamesList.Services.JogoService;
+using Microsoft.AspNetCore.Http.HttpResults;
 using static GamesList.Dtos.Helpers.Results;
 
 namespace GamesList.Services.AvaliacaoService
@@ -59,6 +60,11 @@ namespace GamesList.Services.AvaliacaoService
             {
                 _logger.LogWarning("Tentativa de avaliação para jogo inexistente. jogo: {id} | Usuario: {userId}.", request.JogoId, userId);
                 return NotFound<AvaliacaoDto>("Jogo não encontrado.");
+            }
+            if (request.Opiniao.Length >= 500)
+            {
+                _logger.LogWarning("Campo de opinião com caracteres demais");
+                return BadRequest<AvaliacaoDto>("O texto da avaliação não pode passar de 500 caracteres");
             }
             if (request.Nota < 0 || request.Nota > 10)
             {

@@ -10,6 +10,7 @@ using GamesList.Services.SugestoesImagemService;
 using GamesList.Services.JogoService;
 using static GamesList.Dtos.Helpers.Results;
 using GamesList.Common.Pagination;
+using System.Drawing;
 
 namespace GamesList.Services.SugestoesJogoService
 {
@@ -48,13 +49,28 @@ namespace GamesList.Services.SugestoesJogoService
         }
         public async Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagemCapa, IFormFile imagemIcone, int userId)
         {
+                // valida extensões
+            if (!ValidateExtesion(imagemIcone, true))
+                return BadRequest<MessageResponseDto>("Ícone deve ser ICO, JPG ou PNG");
+
+            if (!ValidateExtesion(imagemCapa, false))
+                return BadRequest<MessageResponseDto>("Capa deve ser JPG ou PNG");
+
+            // valida dimensões (exemplo: capa min 800x600, ícone min 64x64)
+            var dimensionsCapa = GetDimensions(imagemCapa);
+            if (dimensionsCapa == null || dimensionsCapa.Value.width != 460 || dimensionsCapa.Value.height != 215)
+                return BadRequest<MessageResponseDto>("Capa deve ter 460x215px");
+
+            var dimensionsIcone = GetDimensions(imagemIcone);
+            if (dimensionsIcone == null || dimensionsIcone.Value.width > 512 || dimensionsIcone.Value.height > 512 || dimensionsIcone.Value.width / dimensionsIcone.Value.height != 1)
+                return BadRequest<MessageResponseDto>("Ícone deve ter proporções de 1x1px");
 
             var sugestaoResult = await SaveSugestaoJogoAsync(request, userId);
             if (!sugestaoResult.Success) return ServerError<MessageResponseDto>(sugestaoResult.Message!);
 
-            var imagemCapaResult = await SaveImagem(imagemCapa, 1,sugestaoResult.Data);
+            var imagemCapaResult = await SaveImagem(imagemCapa, 1, sugestaoResult.Data);
             if (!imagemCapaResult) _logger.LogError("Não foi possível inserir imagem de capa para o jogo {id}", sugestaoResult.Data);
-            var imagemIconeResult = await SaveImagem(imagemIcone, 2,sugestaoResult.Data);
+            var imagemIconeResult = await SaveImagem(imagemIcone, 2, sugestaoResult.Data);
             if (!imagemIconeResult) _logger.LogError("Não foi possível inserir imagem de capa para o jogo {id}", sugestaoResult.Data);
 
             return Created(new MessageResponseDto("Sugestão inserida com sucesso"));
@@ -85,7 +101,7 @@ namespace GamesList.Services.SugestoesJogoService
                 _logger.LogWarning("Sugestão já aprovada {id}", id);
                 return BadRequest<JogoDto>("Sugestão já aprovada");
             }
-           
+
 
             var jogo = new Jogo { Generos = [.. sugestao.Generos], Nome = sugestao.Nome };
             await _jogoService.AddJogoAsync(jogo);
@@ -132,6 +148,37 @@ namespace GamesList.Services.SugestoesJogoService
                 return NotFound<SugestaoJogo>("Sugestão não encontrada");
             }
             return Ok(sugestao);
-        } 
+        }
+        private static bool ValidateExtesion(IFormFile file, bool isIcon)
+        {
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (isIcon)
+            {
+                var permitted = new[] { ".ico", ".jpg", ".jpeg", ".png" };
+                return permitted.Contains(extension);
+            }
+            else
+            {
+                var permitted = new[] { ".jpg", ".jpeg", ".png" };
+                return permitted.Contains(extension);
+            }
+        }
+        private static (int width, int height)? GetDimensions(IFormFile file)
+        {
+            using var stream = file.OpenReadStream();
+
+            try
+            {
+                using var image = Image.FromStream(stream);
+                return (image.Width, image.Height);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
+    
+
 }

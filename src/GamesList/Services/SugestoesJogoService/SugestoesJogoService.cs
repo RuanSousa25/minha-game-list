@@ -49,14 +49,12 @@ namespace GamesList.Services.SugestoesJogoService
         }
         public async Task<ServiceResultDto<MessageResponseDto>> SaveSugestaoJogoComImagemAsync(UploadGameRequest request, IFormFile imagemCapa, IFormFile imagemIcone, int userId)
         {
-                // valida extensões
             if (!ValidateExtesion(imagemIcone, true))
                 return BadRequest<MessageResponseDto>("Ícone deve ser ICO, JPG ou PNG");
 
             if (!ValidateExtesion(imagemCapa, false))
                 return BadRequest<MessageResponseDto>("Capa deve ser JPG ou PNG");
 
-            // valida dimensões (exemplo: capa min 800x600, ícone min 64x64)
             var dimensionsCapa = GetDimensions(imagemCapa);
             if (dimensionsCapa == null || dimensionsCapa.Value.width != 460 || dimensionsCapa.Value.height != 215)
                 return BadRequest<MessageResponseDto>("Capa deve ter 460x215px");

@@ -10,6 +10,6 @@ namespace GamesList.Services.AuthService
         public Task<ServiceResultDto<MessageResponseDto>> RegisterAsync(RegisterRequest request);
         public Task<ServiceResultDto<LoginResponseDto>> LoginAsync(LoginRequest request);
         public Task<ServiceResultDto<Usuario>> GetUsuarioByIdAsync(int id);
-
+        public Task<ServiceResultDto<UsuarioDto>> GetUsuarioDtoByIdAsync(int id);
     }
 }

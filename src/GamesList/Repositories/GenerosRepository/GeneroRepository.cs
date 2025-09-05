@@ -8,9 +8,9 @@ namespace GamesList.Repositories.GeneroRepository
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 
-        public async Task<List<Genero>> GetGenerosAsync()
+        public async Task<List<Genero>> GetGenerosAsync(string? search)
         {
-            return await _appDbContext.Generos.ToListAsync();
+            return await _appDbContext.Generos.Where(g => search == null || g.Nome.Contains(search)).ToListAsync();
         }
 
         public async Task<List<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids)

@@ -10,9 +10,9 @@ namespace GamesList.Services.GeneroService
         private ILogger<GeneroService> _logger = logger;
         private IUnitOfWork _unitOfWork = uow;
 
-        public async Task<ServiceResultDto<List<Genero>>> ListGenerosAsync()
+        public async Task<ServiceResultDto<List<Genero>>> ListGenerosAsync(string? search)
         {
-            return Ok(await _unitOfWork.GeneroRepository.GetGenerosAsync());
+            return Ok(await _unitOfWork.GeneroRepository.GetGenerosAsync(search));
         }
 
         public async Task<ServiceResultDto<List<Genero>>> ListGenerosByIdsAsync(List<int> ids)

@@ -14,7 +14,7 @@ namespace GamesList.Controllers
 
 
         [HttpGet()]
-        public async Task<IActionResult> ListGenerosByIdsAsync([FromQuery] List<int>? id)
+        public async Task<IActionResult> ListGenerosByIdsAsync([FromQuery] List<int>? id, [FromRoute] string? search)
         {
             if (id is { Count: > 0 })
             {
@@ -22,7 +22,7 @@ namespace GamesList.Controllers
             }
             else
             {
-                return FromResult( await _generoService.ListGenerosAsync());
+                return FromResult( await _generoService.ListGenerosAsync(search));
             }            
         }
     }

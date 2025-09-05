@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Dtos;
 using GamesList.Models;
 using GamesList.Repositories.UnitOfWork;
@@ -10,14 +11,14 @@ namespace GamesList.Services.GeneroService
         private ILogger<GeneroService> _logger = logger;
         private IUnitOfWork _unitOfWork = uow;
 
-        public async Task<ServiceResultDto<List<Genero>>> ListGenerosAsync(string? search)
+        public async Task<ServiceResultDto<PagedResult<Genero>>> ListGenerosAsync(PaginationParams paginationParams)
         {
-            return Ok(await _unitOfWork.GeneroRepository.GetGenerosAsync(search));
+            return Ok(await _unitOfWork.GeneroRepository.GetGenerosAsync(paginationParams));
         }
 
-        public async Task<ServiceResultDto<List<Genero>>> ListGenerosByIdsAsync(List<int> ids)
+        public async Task<ServiceResultDto<PagedResult<Genero>>> ListGenerosByIdsAsync(List<int> ids, PaginationParams paginationParams)
         {
-            return Ok(await _unitOfWork.GeneroRepository.GetGenerosByGenerosIdsAsync(ids));
+            return Ok(await _unitOfWork.GeneroRepository.GetGenerosByGenerosIdsAsync(ids, paginationParams));
         }
     }
 }

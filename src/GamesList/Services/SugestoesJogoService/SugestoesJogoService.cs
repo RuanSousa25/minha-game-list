@@ -40,8 +40,8 @@ namespace GamesList.Services.SugestoesJogoService
                 _logger.LogWarning("Sugestão de jogo com quantidade inválida de gêneros cadastrados. Count: {count}", request.Generos.Count);
                 return BadRequest<int>("O jogo deve conter entre 1 a 6 gêneros.");
             }
-            var generos = await _unitOfWork.GeneroRepository.GetGenerosByGenerosIdsAsync([.. request.Generos]);
-            var sugestao = new SugestaoJogo { UsuarioId = userId, Nome = request.Nome, Generos = generos, DataSugestao = DateTime.UtcNow, Aprovado = false };
+            var generos = await _unitOfWork.GeneroRepository.GetGenerosByGenerosIdsAsync([.. request.Generos],new PaginationParams());
+            var sugestao = new SugestaoJogo { UsuarioId = userId, Nome = request.Nome, Generos = generos.Items, DataSugestao = DateTime.UtcNow, Aprovado = false };
             await _unitOfWork.SugerirJogoRepository.AddSugestaoJogoAsync(sugestao);
             await _unitOfWork.CommitChangesAsync();
             _logger.LogInformation("Sugestão de jogo {nome} inserida com sucesso. Id da sugestão: {id}", sugestao.Nome, sugestao.Id);

@@ -1,6 +1,8 @@
 DROP SCHEMA IF EXISTS minha_game_list CASCADE;
 CREATE SCHEMA minha_game_list;
 
+CREATE EXTENSION pg_trgm;
+
 SET search_path TO minha_game_list;
 
 CREATE TABLE roles (
@@ -23,6 +25,7 @@ CREATE TABLE generos (
     id SERIAL PRIMARY KEY,
     nome TEXT NOT NULL UNIQUE
 );
+CREATE INDEX idx_generos_nome_trgm ON generos USING gin (nome gin_trgm_ops);
 
 CREATE TABLE jogos_generos (
     jogo_id INTEGER NOT NULL,

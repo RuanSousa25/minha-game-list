@@ -1,10 +1,11 @@
+using GamesList.Common.Pagination;
 using GamesList.Models;
 
 namespace GamesList.Repositories.GeneroRepository
 {
     public interface IGeneroRepository
     {
-        public Task<List<Genero>> GetGenerosAsync(string? search);
-        public Task<List<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids);
+        public Task<PagedResult<Genero>> GetGenerosAsync(PaginationParams paginationParams);
+        public Task<PagedResult<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids, PaginationParams paginationParams);
     }
 }

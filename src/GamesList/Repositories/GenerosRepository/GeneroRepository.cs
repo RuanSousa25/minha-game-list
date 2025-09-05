@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Databases;
 using GamesList.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,14 +9,14 @@ namespace GamesList.Repositories.GeneroRepository
     {
         private readonly AppDbContext _appDbContext = appDbContext;
 
-        public async Task<List<Genero>> GetGenerosAsync(string? search)
+        public async Task<PagedResult<Genero>> GetGenerosAsync(PaginationParams paginationParams)
         {
-            return await _appDbContext.Generos.Where(g => search == null || g.Nome.Contains(search)).ToListAsync();
+            return await _appDbContext.Generos.Where(g => paginationParams.Search == null || g.Nome.Contains(paginationParams.Search)).ToPagedResultAsync(paginationParams);
         }
 
-        public async Task<List<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids)
+        public async Task<PagedResult<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids, PaginationParams paginationParams)
         {
-            return await _appDbContext.Generos.Where(g => ids.Contains(g.Id)).ToListAsync();
+            return await _appDbContext.Generos.Where(g => ids.Contains(g.Id)).ToPagedResultAsync(paginationParams);
         }
     }
 }

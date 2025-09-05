@@ -1,3 +1,4 @@
+using GamesList.Common.Pagination;
 using GamesList.Models;
 using GamesList.Services.GeneroService;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,15 @@ namespace GamesList.Controllers
 
 
         [HttpGet()]
-        public async Task<IActionResult> ListGenerosByIdsAsync([FromQuery] List<int>? id, [FromRoute] string? search)
+        public async Task<IActionResult> ListGenerosByIdsAsync([FromQuery] List<int>? ids, [FromQuery] PaginationParams paginationParams)
         {
-            if (id is { Count: > 0 })
+            if (ids is { Count: > 0 })
             {
-                return FromResult( await _generoService.ListGenerosByIdsAsync(id));
+                return FromResult( await _generoService.ListGenerosByIdsAsync(ids, paginationParams));
             }
             else
             {
-                return FromResult( await _generoService.ListGenerosAsync(search));
+                return FromResult( await _generoService.ListGenerosAsync(paginationParams));
             }            
         }
     }

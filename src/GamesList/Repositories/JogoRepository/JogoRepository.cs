@@ -47,6 +47,7 @@ namespace GamesList.Repositories.JogoRepository
             .Include(j => j.Avaliacoes)
             .Include(j => j.Generos)
             .Include(j => j.Imagens)
+            .Where(j => paginationParams.Search == null || j.Nome.ToLower().Contains(paginationParams.Search.ToLower()))
             .OrderBy(j => j.Nome)
             .Select(j => new JogoDto(j))
             .ToPagedResultAsync(paginationParams);

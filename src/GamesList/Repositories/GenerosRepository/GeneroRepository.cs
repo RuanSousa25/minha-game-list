@@ -11,12 +11,19 @@ namespace GamesList.Repositories.GeneroRepository
 
         public async Task<PagedResult<Genero>> GetGenerosAsync(PaginationParams paginationParams)
         {
-            return await _appDbContext.Generos.Where(g => paginationParams.Search == null || g.Nome.Contains(paginationParams.Search)).ToPagedResultAsync(paginationParams);
+            return await _appDbContext.Generos
+            .Where(g => paginationParams.Search == null
+            || g.Nome.ToLower().Contains(paginationParams.Search.ToLower()))
+            .ToPagedResultAsync(paginationParams);
         }
 
         public async Task<PagedResult<Genero>> GetGenerosByGenerosIdsAsync(List<int> ids, PaginationParams paginationParams)
         {
-            return await _appDbContext.Generos.Where(g => ids.Contains(g.Id)).ToPagedResultAsync(paginationParams);
+            return await _appDbContext.Generos
+            .Where(g => ids.Contains(g.Id))
+            .Where(g => paginationParams.Search == null
+            || g.Nome.ToLower().Contains(paginationParams.Search.ToLower()))
+            .ToPagedResultAsync(paginationParams);
         }
     }
 }

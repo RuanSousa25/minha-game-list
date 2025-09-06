@@ -12,31 +12,6 @@ namespace GamesList.Common.Pagination
         PaginationParams paginationParams)
         {
 
-            // if (!string.IsNullOrWhiteSpace(paginationParams.Search))
-            // {
-            //     var stringProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            //     .Where(p => p.PropertyType == typeof(string))
-            //     .ToArray();
-
-            //     if (stringProperties.Length > 0)
-            //     {
-            //         ParameterExpression param = Expression.Parameter(typeof(T), "x");
-            //         Expression? combined = null;
-
-            //         foreach (var prop in stringProperties)
-            //         {
-            //             var propExpr = Expression.Property(param, prop);
-            //             var searchExpr = Expression.Constant(paginationParams.Search);
-            //             var containsMethod = typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!;
-            //             var containsCall = Expression.Call(propExpr, containsMethod, searchExpr);
-
-            //             combined = combined == null ? containsCall : Expression.OrElse(combined, containsCall);
-            //         }
-            //         var lambda = Expression.Lambda<Func<T, bool>>(combined!, param);
-            //         query = query.Where(lambda);
-            //     }
-            // }
-
 
             var totalItems = await query.CountAsync();
             var items = await query.Skip((paginationParams.Page - 1) * paginationParams.PageSize)

@@ -37,6 +37,7 @@ namespace GamesList.Repositories.AvaliacaoRepository
             .Include(a => a.Jogo)
             .Include(a => a.Usuario)
             .Where(a => a.Jogo.Id == jogoId)
+            .Where(a => paginationParams.Search == null || a.Opiniao.ToLower().Contains(paginationParams.Search.ToLower()))
             .Select(a => new AvaliacaoDto(a))
             .ToPagedResultAsync(paginationParams);
         }
@@ -47,6 +48,7 @@ namespace GamesList.Repositories.AvaliacaoRepository
             .Include(a => a.Usuario)
             .Include(a => a.Jogo)
             .Where(a => a.Usuario.Id == usuarioId)
+             .Where(a => paginationParams.Search == null || a.Opiniao.ToLower().Contains(paginationParams.Search.ToLower()))
             .Select(a => new AvaliacaoDto(a))
             .ToPagedResultAsync(paginationParams);
         }

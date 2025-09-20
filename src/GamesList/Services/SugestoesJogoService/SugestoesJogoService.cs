@@ -123,6 +123,10 @@ namespace GamesList.Services.SugestoesJogoService
         {
             return Ok(await _unitOfWork.SugerirJogoRepository.ListSugestoesJogosPagedAsync(paginationParams));
         }
+        public async Task<ServiceResultDto<PagedResult<SugestaoJogoDto>>> ListSugerirJogoByUserIdPagedAsync(PaginationParams paginationParams, int userId)
+        {
+            return Ok(await _unitOfWork.SugerirJogoRepository.GetSugestoesJogoByUsuarioIdPagedAsync( paginationParams, userId));
+        }
         public async Task<ServiceResultDto<MessageResponseDto>> RemoverSugestaoJogoAsync(int id)
         {
             var sugestao = await _unitOfWork.SugerirJogoRepository.GetSugestaoJogoComRelacoesByIdAsync(id);

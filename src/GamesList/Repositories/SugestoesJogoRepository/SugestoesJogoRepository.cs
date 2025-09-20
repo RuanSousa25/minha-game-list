@@ -48,5 +48,15 @@ namespace GamesList.Repositories.SugestoesJogoRepository
         {
             await _appDbContext.SugestoesJogo.AddAsync(SugestoesJogo);            
         }
+
+        public async Task<PagedResult<SugestaoJogoDto>> GetSugestoesJogoByUsuarioIdPagedAsync(PaginationParams paginationParams, int id)
+        {
+            return await _appDbContext.SugestoesJogo
+            .Include(s => s.Generos)
+            .Include(s => s.Imagens)
+            .Where(s => s.UsuarioId == id && paginationParams.Search == null || s.Nome.ToLower().Contains(paginationParams.Search.ToLower()))
+            .Select(s => new SugestaoJogoDto(s))
+            .ToPagedResultAsync(paginationParams);
+        }
     }
 }

@@ -25,6 +25,16 @@ namespace GamesList.Controllers
             return FromResult(result);
         }
 
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> ListSugestoesJogoByUserId([FromQuery] PaginationParams paginationParams, [FromRoute] int userId)
+        {
+            Console.WriteLine(paginationParams.Search == null? "null":"não null");
+            Console.WriteLine(userId);
+            var result = await _sugestoesJogoService.ListSugerirJogoByUserIdPagedAsync(paginationParams, userId);
+            return FromResult(result);
+        }
+
+
         [HttpPost()]
         [Authorize]
         public async Task<IActionResult> SaveSugestaoJogo([FromForm] string sugestao, [FromForm] IFormFile imagemCapa, [FromForm] IFormFile imagemIcone, [FromForm] List<IFormFile> imagensPromo)

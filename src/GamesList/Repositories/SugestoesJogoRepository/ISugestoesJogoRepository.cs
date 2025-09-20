@@ -9,7 +9,7 @@ namespace GamesList.Repositories.SugestoesJogoRepository
         public Task<PagedResult<SugestaoJogoDto>> ListSugestoesJogosPagedAsync(PaginationParams paginationParams);
         public Task<SugestaoJogo?> GetSugestaoJogoComRelacoesByIdAsync(int id);
         public Task<SugestaoJogo?> GetSugestaoJogoByIdAsync(int id);
-        public Task<List<SugestaoJogo>> GetSugestoesJogoByUsuarioIdAsync(int id);
+        public Task<PagedResult<SugestaoJogoDto>> GetSugestoesJogoByUsuarioIdPagedAsync(PaginationParams paginationParams, int id);
         public void RemoveSugestao(SugestaoJogo sugerirJogo);
         public Task AddSugestaoJogoAsync(SugestaoJogo sugerirJogo);
     }

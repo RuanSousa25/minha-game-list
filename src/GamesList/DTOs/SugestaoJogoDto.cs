@@ -5,6 +5,7 @@ namespace GamesList.Dtos
     public class SugestaoJogoDto(SugestaoJogo sugestao)
     {
         public int Id { get; set; } = sugestao.Id;
+        public int? JogoAprovadoId { get; set; } = sugestao.JogoAprovadoId;
         public int UsuarioId { get; set; } = sugestao.UsuarioId;
         public string Nome { get; set; } = sugestao.Nome;
         public ICollection<string> Generos { get; set; } = [.. sugestao.Generos.Select(g => g.Nome)];
